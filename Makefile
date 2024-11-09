@@ -1,14 +1,35 @@
 # Makefile for managing package
-VENV_NAME := .venv
+VENV := .venv
+PYTHON := $(VENV)/Scripts/python
+PIP := $(VENV)/Scripts/pip
 
-all: venv activate
+.PHONY: all
+all: $(VENV) requirements.txt
 
-venv:
-	python -m venv $(VENV_NAME)
 
-activate: .venv
-	source $(VENV_NAME)/Scripts/activate
+$(VENV):
+	python -m venv .venv
 
-install: requirements.txt
-	pip install -r requirements.txt
 
+.PHONY: install
+install: requirements.txt $(VENV)
+	$(PIP) install -r requirements.txt
+
+
+requirements.txt: $(VENV)
+	$(PIP) install -r requirements.txt
+
+
+.PHONY: clean
+clean:
+	rmdir $(VENV) /s /q
+
+
+.PHONY: help
+help:
+	@echo Targets:
+	@echo   all        - Create environment and install dependancies.
+	@echo   $(VENV)      - Create a virtual environment
+	@echo   install    - Install dependencies from requirements.txt
+	@echo   clean      - Remove the virtual environment
+	@echo   help       - Display this help message
