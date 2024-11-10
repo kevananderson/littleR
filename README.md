@@ -6,3 +6,8 @@ Needed to use project
     Get-ExecutionPolicy
     Set-ExecutionPolicy Unrestricted -Scope CurrentUser
     ```
+- Run Make
+    ```
+    make
+    make help
+    ```
