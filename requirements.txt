@@ -1,3 +1,4 @@
 wheel
 ruamel.yaml
 sphinx
+Django

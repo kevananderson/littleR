@@ -4,24 +4,32 @@ PYTHON := $(VENV)/Scripts/python
 PIP := $(VENV)/Scripts/pip
 
 .PHONY: all
-all: $(VENV) requirements.txt
-
-
+all: $(VENV) install
+	@echo ************
+	@echo !!! DONE !!!
+	@echo ************
+	
 $(VENV):
+	@echo **************************
+	@echo create virtual environment
+	@echo **************************
 	python -m venv .venv
 
 
 .PHONY: install
-install: requirements.txt $(VENV)
-	$(PIP) install -r requirements.txt
-
-
-requirements.txt: $(VENV)
+install: $(VENV)
+	@echo *************************
+	@echo install required packages
+	@echo *************************
+	$(PYTHON) -m pip install --upgrade pip
 	$(PIP) install -r requirements.txt
 
 
 .PHONY: clean
 clean:
+	@echo ***************************
+	@echo CLEAN all build directories
+	@echo ***************************
 	rmdir $(VENV) /s /q
 
 

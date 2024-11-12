@@ -16,4 +16,5 @@ development one.
    This project is under development.
 
 .. toctree::
+   self
    usage
