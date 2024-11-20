@@ -1,1 +1,2 @@
-doc_folder: ./doc
+validation:
+    unique_index: true

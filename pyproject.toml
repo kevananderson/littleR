@@ -1,0 +1,42 @@
+#Build Package
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+#Package Information
+[project]
+name = "littleR"
+version = "0.0.1"
+authors = [
+    {name = "Kevan Anderson"},
+]
+description = "A full featured requirements management suite: Written in python, stored in yaml, and managed with git."
+readme = "README.md"
+requires-python = ">=3.12"
+license = {file = "LICENSE"}
+classifiers = [
+    "Intended Audience :: Developers",
+    "Development Status :: 2 - Pre-Alpha",
+    "Framework :: Django",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: Apache-2.0",
+    "Topic :: Software Development :: Tools",
+    "Topic :: Software Development :: Documentation",
+]
+keywords = ["requirements", "management", "yaml", "git", "python", "django"]
+dynamic = [
+    #"version",
+    "dependencies",
+    ]
+
+[tool.setuptools.dynamic]
+dependencies = {file = "requirements.txt"}
+
+[project.urls]
+Repository = "https://github.com/kevananderson/littleR"
+
+[tool.setuptools.packages.find]
+# All the following settings are optional:
+include = ["littleR"]
+exclude = ["test","docs","project","reports","customer"]  # empty by default

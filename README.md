@@ -13,11 +13,11 @@ Also hiding in the package is a fully working web application (django). This is 
 the graphic interface for editing the requirements in littleR. Of course they can also
 be edited directly in the .yaml file.
 
-The entry point to all of this is the file **manage.py** which is an old school prompt
-based text interface. It will present and allow the requirements author to select from
-all the avaliable tasks. 
+The entry point to all of this is the file **manage.py** which is an old school 
+prompt-based text interface. It will present and allow the requirements author to select from
+all the available tasks. 
 
-**manage.py** is the place to start your first project too, selecting option 2.
+**manage.py** is the place to start your first project too, selecting option [2].
 
 ## Installation
 - Install from pypi
@@ -32,10 +32,10 @@ This project was developed on windows in a python venv. Some of the tools requir
 install on windows. The following describes how to check out the project to contribute to the 
 project.
 
-### Prerequsites
-- Install Make 
-- Install Python, at least python 3.12
-- Change the execution policy of the powershell. [Security Issue]
+### Prerequisites
+- Install [Make](https://gnuwin32.sourceforge.net/packages/make.htm) 
+- Install [Python](https://www.python.org/downloads/windows/), at least python 3.12
+- Change the execution policy of the powershell. **Security Issue**
     ```
     Get-ExecutionPolicy
     Set-ExecutionPolicy Unrestricted -Scope CurrentUser

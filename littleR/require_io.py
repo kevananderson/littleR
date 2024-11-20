@@ -1,61 +1,116 @@
 import os
 import ruamel.yaml
 from requirement import Requirement
+from validate import Validator
+from standard import Standard
 
 class RequireIO:
-    def __init__(self, path):
+    def __init__(self, customer=None, validator=None, path=None):
+        self.customer = customer
+
+        self.validator = validator
+        if validator is None:
+            validator_path = os.path.join( os.getcwd(), "reports/verification")
+            self.validator = Validator(validator_path)
+
+        #project base path
+        if path is None:
+            path = os.getcwd()
         self.path = path
+
+        #project folder
+        try:
+            self.project_path = os.path.join(self.path, 'project')
+            if not os.path.isdir(self.project_path):
+                self.validator.note(f'Project path not found: {self.project_path}', problem=True)
+        except Exception:
+            self.validator.note(f'Error finding project path.', problem=True)
+            self.project_path = ""
+
+        #customer folder, if specified
+        if self.customer is not None:
+            try:
+                self.customer_path = os.path.join(self.path, f'customer/{self.customer}')
+                if not os.path.isdir(self.customer_path):
+                    self.validator.note(f'Customer path not found: {self.customer_path}', problem=True)
+            except Exception:
+                self.validator.note(f'Error finding customer path.', problem=True)
+                self.customer_path = ""
+
+        self.standard = Standard(self.validator)
+        self.req_files = []
 
     def read(self):
         #get all requirement files in the path
         req_files = self._get_requirement_files()
         
-        #get the raw requirements from the files
-        requirements = self._get_raw_requirements(req_files)
-        
-        #find all the new requirements
-        
-        #make sure all the requirements are valid
+        #use the raw requirements to add to the standard
+        self._read_requirement_files(req_files)
+
+        #replace new requirements in the standard with the valid indices
+        self.standard.update_new_requirements()
 
         #link the requirements together
+        self.standard.link_requirements()
 
-
-
-
+        #find the tree
+        self.standard.build_tree()
 
     def write(self, data):
         with open(self.path, 'w') as f:
             f.write(data)
     
     def _get_requirement_files(self):
-        req_files = []
-        for root, _, files in os.walk(self.path):
-            for file in files:
-                if file.endswith('.yaml') and file != 'config.yaml':
-                    req_files.append(os.path.join(root, file))
-        return req_files
+        #project path
+        if os.path.isdir(self.project_path):
+            for root, _, files in os.walk(self.project_path):
+                for file in files:
+                    if file.endswith('.yaml'):
+                        self.req_files.append(os.path.join(root, file))
+
+        #customer path
+        if os.path.isdir(self.customer_path):
+            for root, _, files in os.walk(self.customer_path):
+                for file in files:
+                    if file.endswith('.yaml'):
+                        self.req_files.append(os.path.join(root, file))
+
+        if len(self.req_files) == 0:
+            self.validator.note('No requirement files found.', problem = True)
     
-    def _get_raw_requirements(self, req_files):
+    def _read_requirement_files(self):
         #initialize yaml parser
         yaml = ruamel.yaml.YAML()
-        
-        #initialize list to hold the requirements
-        requirements = []
 
         #for each file, read it and parse it into requirements, storing them in the list
-        for req_file in req_files:
+        for req_file in self.req_files:
             data = None
-            with open(req_file, 'r') as file:
-                data = yaml.load(file)
+            try:
+                with open(req_file, 'r') as file:
+                    data = yaml.load(file)
+            except Exception:            
+                self.validator.file_note(f'Error reading file.', req_file, problem=True)
 
-            if data is not None:
-                for key, value in data.items():
-                    value['index'] = key
-                    requirement = Requirement(value, req_file)
-                    
-                    if requirement is not None:
-                        requirements.append(requirement)
+            if data is None:
+                self.validator.file_note(f'No data read from file file.', req_file, problem=True)
 
+            if len(data) == 0:
+                self.validator.file_note(f'No requirements found in file.', req_file, problem=True)
+
+            for key, value in data.items():
+                if not Requirement.valid_index(key):
+                    self.validator.file_note(f'Invalid index: {key}.', req_file, problem=True)
+                    continue
+
+                value['index'] = key
+                requirement = Requirement(value, req_file)
+
+                if requirement is None:
+                    self.validator.index_note(f'Error creating requirement from file.', req_file, key, problem=True)
+                
+                #now we add the requirement to the list of requirements
+                self.standard.add_requirement(requirement)
+                            
     def _get_config(self):
         '''returns a dictionary of the config file
         

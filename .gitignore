@@ -1,7 +1,10 @@
 .venv
 .vscode
 __pycache__
-project
 config.yaml
+project
 reports
+customer
 docs/build
+dist
+*.egg-info
