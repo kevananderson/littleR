@@ -1,6 +1,7 @@
 import ruamel.yaml
 from folio import Folio
 
+
 class Requirement:
 
     def __init__(self):

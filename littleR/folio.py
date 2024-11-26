@@ -3,17 +3,18 @@ import ruamel.yaml
 from validate import Validator
 from requirement import Requirement
 
+
 class Folio:
 
     def __init__(self, path, validator):
-        #verify the input
+        # verify the input
         if not isinstance(path, str):
             raise TypeError("The path must be a string")
         if not path.endswith(".yaml") or not os.path.isfile(path):
             raise ValueError("The path must be a file ending in .yaml")
         if not isinstance(validator, Validator):
             raise ValueError("The validator must be an instance of the Validator class")
-        
+
         # store the path
         self._path = path
 
@@ -35,16 +36,16 @@ class Folio:
 
     def valid(self):
         return self._valid
-    
+
     def parse_file(self, force=False):
-        #verify input
+        # verify input
         if not isinstance(force, bool):
             raise TypeError("force must be a boolean")
-        
+
         # we don't need to parse an invalid file
         if not self.valid() and not force:
             return []
-        
+
         # clear the requirements and status
         self._requirements = []
         self._valid = True
@@ -64,7 +65,7 @@ class Folio:
         # these checks make sure data was returned
         if data is None:
             self._validator.file_note(
-                self, "No data read from file file.",problem=True
+                self, "No data read from file file.", problem=True
             )
             self._valid = False
             return []
@@ -75,16 +76,14 @@ class Folio:
             )
             self._valid = False
             return []
-        
+
         # now we check the contents of the data by trying to make requirements out of it
         parsed_requirements = []
         for key, value in data.items():
 
             if not Requirement.valid_index(key):
-                self._validator.file_note(
-                    self, f"Invalid index: {key}.", problem=True
-                )
-                #this does not make the file invalid, just skips the requirement
+                self._validator.file_note(self, f"Invalid index: {key}.", problem=True)
+                # this does not make the file invalid, just skips the requirement
                 continue
 
             value["index"] = key
@@ -96,7 +95,7 @@ class Folio:
                     f"Error creating requirement with key <{key}> from file.",
                     problem=True,
                 )
-                #this does not make the file invalid, just skips the requirement
+                # this does not make the file invalid, just skips the requirement
                 continue
 
             if requirement in parsed_requirements:
@@ -105,26 +104,26 @@ class Folio:
                     f"Duplicate requirement with index <{key}> found in file. Second instance deleted.",
                     problem=True,
                 )
-                #this does not make the file invalid, just skips the requirement
+                # this does not make the file invalid, just skips the requirement
                 continue
 
             # now we add the requirement to the list of requirements
 
             parsed_requirements.append(requirement)
-        
-        #now check if we have any requirements
+
+        # now check if we have any requirements
         if len(parsed_requirements) == 0:
             self._validator.file_note(
                 self, "No requirements were able to be created from file.", problem=True
             )
             self._valid = False
             return []
-        
+
         # return the list of requirements
         return parsed_requirements
 
     def link_requirement(self, requirement):
-        #verify the input
+        # verify the input
         if not isinstance(requirement, Requirement):
             raise TypeError("requirement must be an instance of Requirement")
         if requirement not in self._requirements:
@@ -133,7 +132,7 @@ class Folio:
     def write_file(self):
         # we don't need to write an invalid file
         if not self.valid():
-            return 
+            return
 
         # create the text to write
         text = ""
@@ -141,7 +140,9 @@ class Folio:
             try:
                 req_text = req.to_yaml()
             except Exception:
-                self._validator.index_note(req, "Error creating .yaml text from requirement.", problem=True)
+                self._validator.index_note(
+                    req, "Error creating .yaml text from requirement.", problem=True
+                )
                 continue
             text += req_text + "\n"
         text = text.strip()
@@ -161,7 +162,7 @@ class Folio:
             self._validator.file_note(self, "Error reading file.", problem=True)
             self._valid = False
             return None
-        return data        
+        return data
 
     def __str__(self):
         return f"Folio({self._path})"
@@ -172,4 +173,4 @@ class Folio:
     def __eq__(self, other):
         if not isinstance(other, Folio):
             return False
-        return self._path == other._path    
+        return self._path == other._path

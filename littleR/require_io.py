@@ -74,7 +74,7 @@ class RequireIO:
                         folio = Folio(os.path.join(root, file), self.validator)
                         if folio.valid():
                             self.standard.add_folio(folio)
-            
+
         # customer path
         if os.path.isdir(self.customer_path):
             for root, _, files in os.walk(self.customer_path):
