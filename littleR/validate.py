@@ -1,10 +1,11 @@
 import os
 
+
 class Validator:
     def __init__(self, path=None):
         self.path = path
         if path is None:
-            self.path = os.path.join( os.getcwd(), "reports/verification")
+            self.path = os.path.join(os.getcwd(), "reports/verification")
 
         self._problem_count = 0
 
@@ -12,14 +13,14 @@ class Validator:
         self.FileValidators = {}
 
     def note(self, message, problem=False):
-        self.notes.append( str(message) )
+        self.notes.append(str(message))
         if problem:
             self._problem_count += 1
-    
+
     def file_note(self, message, path, problem=False):
         if path not in self.FileValidators:
             self.FileValidators[path] = FileValidator(path)
-        
+
         self.FileValidators[path].note(message)
 
         if problem:
@@ -28,7 +29,7 @@ class Validator:
     def index_note(self, message, path, index, problem=False):
         if path not in self.FileValidators:
             self.FileValidators[path] = FileValidator(path)
-        
+
         self.FileValidators[path].index_note(message, index)
 
         if problem:
@@ -43,18 +44,19 @@ class Validator:
         for note in self.notes:
             report += note + "\n"
         report += "\n"
-        for file_validator in self.FileValidators.values():        
+        for file_validator in self.FileValidators.values():
             report += file_validator.report()
         return report
 
-class FileValidator():
+
+class FileValidator:
     def __init__(self, path=""):
         self.path = path
         self.notes = []
         self.IndexValidators = {}
-    
+
     def note(self, message):
-        self.notes.append( str(message) )
+        self.notes.append(str(message))
 
     def index_note(self, message, index):
         if index not in self.IndexValidators:
@@ -69,14 +71,15 @@ class FileValidator():
         for index_validator in self.IndexValidators.values():
             report += index_validator.report()
         return report
-    
-class IndexValidator():
+
+
+class IndexValidator:
     def __init__(self, index):
         self.index = index
         self.notes = []
 
     def note(self, message):
-        self.notes.append( str(message) )
+        self.notes.append(str(message))
 
     def report(self):
         report = f"Index: {self.index}\n"
@@ -84,9 +87,9 @@ class IndexValidator():
             report += f"\t{note}\n"
         report += "\n"
         return report
-    
+
+
 class ValidatorTest:
-    
+
     def unique_index(data):
         pass
-

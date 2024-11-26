@@ -1,4 +1,8 @@
+pytest
 wheel
 ruamel.yaml
 sphinx
 Django
+ruff
+pylint
+black

@@ -34,6 +34,34 @@ install: $(ACTIVATE)
 	$(PIP) install --upgrade build
 	$(PIP) install -r requirements.txt
 
+.PHONY: format
+format: $(ACTIVATE)
+	@echo ***********
+	@echo format code
+	@echo ***********
+	$(PYTHON) -m black ./littleR ./test
+
+.PHONY: test
+test: $(ACTIVATE) activate
+	@echo *********
+	@echo run tests
+	@echo *********
+	$(PYTHON) -m pytest ./test
+
+.PHONY: lint
+lint: $(ACTIVATE)
+	@echo *************
+	@echo run fast lint
+	@echo *************
+	$(PYTHON) -m ruff check ./littleR
+
+.PHONY: pylint
+pylint: $(ACTIVATE)
+	@echo *************
+	@echo run slow lint
+	@echo *************
+	$(PYTHON) -m pylint ./littleR
+
 .PHONY: package
 package: $(ACTIVATE) install
 	@echo *************
@@ -62,8 +90,9 @@ help:
 	@echo   env        - Create a virtual environment and install dependancies.
 	@echo   all        - Create environment, install dependancies, and build package.
 	@echo   install    - Install dependencies from requirements.txt.
+	@echo   format	   - Format the code using Black.
 	@echo   test       - Run tests.
-	@echo   lint	   - Run the fast rust linter.
+	@echo   lint	   - Run the fast ruff linter.
 	@echo   pylint     - Run the slower pylint linter.
 	@echo   package    - Build the package.
 	@echo   clean      - Remove Package build files.

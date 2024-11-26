@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class ViewRConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'viewR'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "viewR"
