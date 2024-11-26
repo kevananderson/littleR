@@ -1,133 +1,343 @@
 import os
+import ruamel.yaml
 from validate import Validator
 from requirement import Requirement
+from folio import Folio
 
 
 class Standard:
-    def __init__(self, validator=None):
-        self.req_dict = {}
-        self.tree = []
+    def __init__(self, name = "Working"):
+        # verify the input
+        if not isinstance(name, str):
+            raise TypeError("name must be a string")
+        
+        # the name of the standard
+        self._name = name
 
-        self.new_requirements = {}
-        self.max_index = 0
+        # the requirements in all their forms
+        self._requirements = {}
+        self._tree = []
 
-        self.validator = validator
-        if validator is None:
-            validator_path = os.path.join(os.getcwd(), "reports/verification")
-            self.validator = Validator(validator_path)
+        #keeping track of new requirements and the max index
+        self._new_requirements = {}
+        self._max_index = 0
+
+        # folios stored by path
+        self._folios = {}
+
+        # the config for the standard
+        self._config = {}
+
+        # this is the start of the validator object, all validation starts with the standard
+        validator_path = os.path.join(os.getcwd(), "reports/verification")
+        self._validator = Validator(validator_path)
+
+        # project and customer paths
+        self._project_path = ""
+        self._customer_path = ""
+
+    def read(self, directory=None):
+        #verify the input
+        if directory is None:
+            directory = os.getcwd()
+        if not os.path.isdir(directory):
+            raise ValueError("The directory must be a valid directory")
+        
+        #get the config file
+        self._get_config(directory)
+
+        #get the paths to read from
+        self._get_paths(directory)
+
+        #get all requirement files in the paths
+        self._get_folios()
+
+        #get the raw requirements from the folios
+        self._add_requirements()
+
+        #update the new requirements to get valid indices
+        self._update_new_requirements()
+
+        #link the requirements together
+        self._link_requirements()
+
+    def write(self):
+        #link the requirements to their folios
+        for req in self._requirements.values():
+            req.folio().link_requirement(req)
+
+        # write the requirements to the directory
+        for folio in self._folios.values():
+            folio.write_file()
+
+    def file_count(self):
+        return len(self.folios)
 
     def add_requirement(self, requirement):
-        if requirement is None:
-            return
+        # verify the input
         if not isinstance(requirement, Requirement):
-            return
-        if not Requirement.valid_index(requirement.index):
-            return
-        if requirement.index in self.req_dict:
-            self.validator.file_note(
-                f"Duplicate index: {requirement.index}.", requirement.file, problem=True
-            )
-            return
+            raise TypeError("requirement must be an instance of Requirement")
 
-        self.req_dict[requirement.index] = requirement
+        #check that the requirement is not already present
+        if requirement.index in self._requirements:
+            first_req = self._requirements[requirement.index]
+            second_req = requirement
+            
+            if first_req != second_req:
+                self._validator.index_note(
+                    first_req,
+                    f"Requirement duplicated in file: {second_req.path()}.",
+                    problem=True
+                )
+                self._validator.index_note(
+                    second_req,
+                    f"Requirement duplicated in file: {first_req.path()}."
+                    #problem already reported
+                )
+            return
+        
+        # add the requirement to the dictionary
+        self._requirements[requirement.index] = requirement
 
         # we will also record some information about the requirements (new and max index) here.
         if requirement.is_new():
-            self.new_requirements[requirement.index] = "Unknown"
+            self._new_requirements[requirement.index] = "Unknown"
         else:
             idx = requirement.int_index()
-            if idx > self.max_index:
-                self.max_index = idx
+            if idx > self._max_index:
+                self._max_index = idx
 
-    def update_new_requirements(self):
+    # read methods
+
+    def _get_config(self, directory):
+        # verify the input
+        if not isinstance(directory, str):
+            raise TypeError("The directory must be a string")
+        if not os.path.isdir(directory):
+            raise ValueError("The directory must be a valid directory")
+        
+        config_path = os.path.join(directory, "config.yaml")
+
+        if not os.path.isfile(config_path):
+            self._validator.note(f"Config file not found at {config_path}", problem=True)
+            return
+
+        yaml = ruamel.yaml.YAML()
+
+        config = None
+        try:
+            with open(config_path, "r") as file:
+                config = yaml.load(file)
+        except Exception:
+            self._validator.note("Error parsing config file.", problem=True)
+            return
+
+        # these checks make sure data was returned
+        if config is None:
+            self._validator.note(
+                "No data read from config file.",problem=True
+            )
+            return
+            
+        # check that the config is a dictionary
+        if not isinstance(config, dict):
+            self._validator.note(
+                "Config file must be read in as a dictionary.", problem=True
+            )
+            return
+        
+        # check that the config is not empty
+        if len(config) == 0:
+            self._validator.note(
+                "No configuration information found in file.", problem=True
+            )
+            return
+
+        # store the config
+        self._config = config
+
+    def _get_paths(self, directory):
+        # verify the input
+        if not isinstance(directory, str):
+            raise TypeError("The directory must be a string")
+        if not os.path.isdir(directory):
+            raise ValueError("The directory must be a valid directory")
+        
+        # project folder
+        try:
+            self._project_path = os.path.join(directory, "project")
+            if not os.path.isdir(self._project_path):
+                self._validator.note(
+                    f"Project path not found: {self._project_path}", problem=True
+                )
+                self._project_path = ""
+        except Exception:
+            self._validator.note(f"Error finding project path.", problem=True)
+            self._project_path = ""
+
+        # customer folder
+        try:
+            self._customer_path = os.path.join(directory, "customer")
+            if not os.path.isdir(self._customer_path):
+                self._validator.note(
+                    f"Customer path not found: {self._customer_path}", problem=True
+                )
+                self._customer_path = ""
+        except Exception:
+            self._validator.note(f"Error finding customer path.", problem=True)
+            self._customer_path = ""
+
+    def _get_folios(self):
+        # verify required input
+        if self._project_path == "" and self._customer_path == "":
+            self._validator.note("No project or customer path found.", problem=True)
+            return
+        
+        # project path
+        for root, _, files in os.walk(self.project_path):
+            for file in files:
+                if file.endswith(".yaml"):
+                    folio = Folio(os.path.join(root, file), self.validator)
+                    if folio.valid():
+                        self._add_folio(folio)
+            
+        # customer path
+        for root, _, files in os.walk(self.customer_path):
+            for file in files:
+                if file.endswith(".yaml"):
+                    folio = Folio(os.path.join(root, file), self.validator)
+                    if folio.valid():
+                        self._add_folio(folio)
+
+        if self.file_count() == 0:
+            self.validator.note("No requirement files found.", problem=True)
+
+    def _add_folio(self, folio):
+        # verify input
+        if not isinstance(folio, Folio) or not folio.valid():
+            raise TypeError("folio must be a valid instance of Folio")
+
+        # add the folio to the dictionary
+        path = folio.path()
+        if path not in self.folios:
+            self.folios[path] = folio
+
+    def _add_requirements(self):
+        # verify required input
+        if len(self.folios) == 0:
+            self._validator.note("Requirements cannot be added if there are no requirement files.") #problem already reported
+            return
+        
+        #get the requirements from each folio
+        for folio in self._folios.values():
+            raw_requirements = folio.parse_file()
+
+            if len(raw_requirements) == 0:
+                self._validator.file_note(
+                    folio, "No raw requirements found in file." #problem already reported
+                )
+                continue
+            
+            for req in raw_requirements:
+                self.add_requirement(req)
+        
+    def _update_new_requirements(self):
         # for each new requirement, we will replace it with a valid index
-        for new_index in self.new_requirements.keys():
+        for new_index in self._new_requirements.keys():
             # get the requirement with the new index
-            req = self.req_dict.pop(new_index)
+            req = self._requirements.pop(new_index)
 
             # get the next index
-            self.max_index += 1
-            index = f"r{self.max_index:08d}"
+            self._max_index += 1
+            index = f"r{self._max_index:08d}"
 
             # replace the index
             req.index = index
-            self.new_requirements[new_index] = index
+            self._new_requirements[new_index] = index
 
             # add the requirement back to the dictionary
-            self.req_dict[index] = req
+            self._requirements[index] = req
 
-    def link_requirements(self):
+    def _link_requirements(self):
         """link the requirements
 
         for each requirement's parent_idx, child_idx, and related_idx, we will:
             * link requirements
             * replace "new" indices with the updated index
         """
-        for req in self.req_dict.values():
+        for req in self._requirements.values():
 
             # parent_idx
             for i, parent_idx in enumerate(req.parent_idx):
-                if parent_idx in self.new_requirements:
-                    parent_idx = req.parent_idx[i] = self.new_requirements[parent_idx]
 
-                if parent_idx not in self.req_dict:
-                    self.validator.index_note(
+                if parent_idx in self._new_requirements:
+                    parent_idx = req.parent_idx[i] = self._new_requirements[parent_idx]
+
+                if parent_idx not in self._requirements:
+                    self._validator.index_note(
+                        req,
                         f"Parent index not found: {parent_idx}.",
-                        req.file,
-                        req.index,
                         problem=True,
                     )
+                    continue
 
-                parent_req = self.req_dict[parent_idx]
+                parent_req = self._requirements[parent_idx]
 
                 if parent_req not in req.parents:
                     req.parents.append(parent_req)
 
             # child_idx
             for i, child_idx in enumerate(req.child_idx):
-                if child_idx in self.new_requirements:
-                    child_idx = req.child_idx[i] = self.new_requirements[child_idx]
 
-                if child_idx not in self.req_dict:
-                    self.validator.index_note(
+                if child_idx in self._new_requirements:
+                    child_idx = req.child_idx[i] = self._new_requirements[child_idx]
+
+                if child_idx not in self._requirements:
+                    self._validator.index_note(
+                        req,
                         f"Child index not found: {child_idx}.",
-                        req.file,
-                        req.index,
                         problem=True,
                     )
+                    continue
 
-                child_req = self.req_dict[child_idx]
+                child_req = self._requirements[child_idx]
 
                 if child_req not in req.children:
                     req.children.append(child_req)
 
             # related_idx
             for i, related_idx in enumerate(req.related_idx):
-                if related_idx in self.new_requirements:
-                    related_idx = req.related_idx[i] = self.new_requirements[
+                if related_idx in self._new_requirements:
+                    related_idx = req.related_idx[i] = self._new_requirements[
                         related_idx
                     ]
 
-                if related_idx not in self.req_dict:
+                if related_idx not in self._requirements:
                     self.validator.index_note(
+                        req,
                         f"Related index not found: {related_idx}.",
-                        req.file,
-                        req.index,
                         problem=True,
                     )
+                    continue
 
-                related_req = self.req_dict[related_idx]
+                related_req = self._requirements[related_idx]
 
                 if related_req not in req.related:
                     req.related.append(related_req)
 
-    def build_tree(self):
-        """build the tree of requirements
+    # dunders
 
-        A requirement is in the tree if it has no parents.
-        """
-        self.tree = []
-        for req in self.req_dict.values():
-            if len(req.parents) == 0:
-                self.tree.append(req)
-        self.tree.sort(key=lambda req: req.int_index())
+    def __str__(self):
+        return f"Standard: with {len(self._requirements)} requirements."
+    
+    def __repr__(self):
+        return f"Standard({len(self._requirements)})"
+
+    def __eq__(self, other):
+        if not isinstance(other, Standard):
+            return False
+
+        return ( self._name == other._name
+                and len(self._requirements) == len(other._requirements)
+                and len(self._folios) == len(other._folios)
+        )

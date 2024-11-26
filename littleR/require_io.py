@@ -1,18 +1,17 @@
 import os
 import ruamel.yaml
-from requirement import Requirement
 from validate import Validator
+from requirement import Requirement
+from folio import Folio
 from standard import Standard
 
 
 class RequireIO:
-    def __init__(self, customer=None, validator=None, path=None):
-        self.customer = customer
+    def __init__(self, path=None):
 
-        self.validator = validator
-        if validator is None:
-            validator_path = os.path.join(os.getcwd(), "reports/verification")
-            self.validator = Validator(validator_path)
+        # this is the start of the validator object, all validation starts with reading the requirements
+        validator_path = os.path.join(os.getcwd(), "reports/verification")
+        self.validator = Validator(validator_path)
 
         # project base path
         if path is None:
@@ -26,30 +25,29 @@ class RequireIO:
                 self.validator.note(
                     f"Project path not found: {self.project_path}", problem=True
                 )
+                self.project_path = ""
         except Exception:
             self.validator.note(f"Error finding project path.", problem=True)
             self.project_path = ""
 
-        # customer folder, if specified
+        # customer folder
         if self.customer is not None:
             try:
-                self.customer_path = os.path.join(
-                    self.path, f"customer/{self.customer}"
-                )
+                self.customer_path = os.path.join(self.path, "customer")
                 if not os.path.isdir(self.customer_path):
                     self.validator.note(
                         f"Customer path not found: {self.customer_path}", problem=True
                     )
+                    self.customer_path = ""
             except Exception:
                 self.validator.note(f"Error finding customer path.", problem=True)
                 self.customer_path = ""
 
         self.standard = Standard(self.validator)
-        self.req_files = []
 
     def read(self):
         # get all requirement files in the path
-        req_files = self._get_requirement_files()
+        req_files = self._get_folios()
 
         # use the raw requirements to add to the standard
         self._read_requirement_files(req_files)
@@ -67,22 +65,26 @@ class RequireIO:
         with open(self.path, "w") as f:
             f.write(data)
 
-    def _get_requirement_files(self):
+    def _get_folios(self):
         # project path
         if os.path.isdir(self.project_path):
             for root, _, files in os.walk(self.project_path):
                 for file in files:
                     if file.endswith(".yaml"):
-                        self.req_files.append(os.path.join(root, file))
-
+                        folio = Folio(os.path.join(root, file), self.validator)
+                        if folio.valid():
+                            self.standard.add_folio(folio)
+            
         # customer path
         if os.path.isdir(self.customer_path):
             for root, _, files in os.walk(self.customer_path):
                 for file in files:
                     if file.endswith(".yaml"):
-                        self.req_files.append(os.path.join(root, file))
+                        folio = Folio(os.path.join(root, file), self.validator)
+                        if folio.valid():
+                            self.standard.add_folio(folio)
 
-        if len(self.req_files) == 0:
+        if self.standard.file_count() == 0:
             self.validator.note("No requirement files found.", problem=True)
 
     def _read_requirement_files(self):

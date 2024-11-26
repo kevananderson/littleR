@@ -1,8 +1,11 @@
+import ruamel.yaml
+from folio import Folio
+
 class Requirement:
 
-    def __init__(self, req_dict=None, file=None):
+    def __init__(self):
         # set default values for all fields
-        self.file = file
+        self._folio = None
 
         self.enabled = True
 
@@ -26,63 +29,11 @@ class Requirement:
         self.child = []
         self.related = []
 
-        # we are done if no dictionary is provided
-        if req_dict is None:
-            return
+    def path(self):
+        return self.folio.path()
 
-        # fill in values from the dictionary
-
-        # index
-        if "index" in req_dict:
-            self.index = req_dict["index"]
-
-        # type
-        if "type" in req_dict:
-            self.type = req_dict["type"]
-
-        # title
-        if "title" in req_dict:
-            self.title = req_dict["title"]
-
-        # requirement
-        if "requirement" in req_dict:
-            self.requirement = req_dict["requirement"]
-
-        # description
-        if "description" in req_dict:
-            self.description = req_dict["description"]
-
-        # assumptions
-        if "assumptions" in req_dict:
-            self.assumptions = req_dict["assumptions"]
-
-        # component
-        if "component" in req_dict:
-            self.component = req_dict["component"]
-
-        # label
-        if "label" in req_dict:
-            for label in req_dict["label"]:
-                if label not in self.label:
-                    self.label.append(label)
-
-        # parent_idx
-        if "parent_idx" in req_dict:
-            for parent_idx in req_dict["parent_idx"]:
-                if parent_idx not in self.parent_idx:
-                    self.parent_idx.append(parent_idx)
-
-        # child_idx
-        if "child_idx" in req_dict:
-            for child_idx in req_dict["child_idx"]:
-                if child_idx not in self.child_idx:
-                    self.child_idx.append(child_idx)
-
-        # related_idx
-        if "related_idx" in req_dict:
-            for related_idx in req_dict["related_idx"]:
-                if related_idx not in self.related_idx:
-                    self.related_idx.append(related_idx)
+    def folio(self):
+        return self._folio
 
     def int_index(self):
         """converts the index as an integer value
@@ -100,6 +51,102 @@ class Requirement:
             bool: True if the requirement is new, False otherwise
         """
         return Requirement.is_new_index(self.index)
+
+    def to_yaml(self):
+        yaml = ruamel.yaml.YAML()
+        content = {}
+
+        content["enabled"] = self.enabled
+        content["type"] = self.type
+        content["title"] = self.title
+        content["requirement"] = self.requirement
+        if self.description != "":
+            content["description"] = self.description
+        if self.assumptions != "":
+            content["assumptions"] = self.assumptions
+        if self.component != "":
+            content["component"] = self.component
+        if len(self.label) > 0:
+            content["label"] = self.label
+        if len(self.parent_idx) > 0:
+            content["parent_idx"] = self.parent_idx
+        if len(self.child_idx) > 0 or self.type == "customer":
+            content["child_idx"] = self.child_idx
+        if len(self.related_idx) > 0:
+            content["related_idx"] = self.related_idx
+
+        data = {self.index: content}
+
+        text = yaml.dump_to_string(data)
+        return text
+
+    def factory(folio, req_data=None):
+        # verify the input
+        if not isinstance(folio, Folio) or not folio.valid():
+            raise TypeError("folio must be a valid instance of Folio")
+        if req_data is None:
+            raise ValueError("req_dict must be a dictionary")
+
+        # fill in values from the dictionary
+        req = Requirement()
+
+        # folio
+        req.folio = folio
+
+        # index
+        if "index" in req_data:
+            req.index = req_data["index"]
+
+        # type
+        if "type" in req_data:
+            req.type = req_data["type"]
+
+        # title
+        if "title" in req_data:
+            req.title = req_data["title"]
+
+        # requirement
+        if "requirement" in req_data:
+            req.requirement = req_data["requirement"]
+
+        # description
+        if "description" in req_data:
+            req.description = req_data["description"]
+
+        # assumptions
+        if "assumptions" in req_data:
+            req.assumptions = req_data["assumptions"]
+
+        # component
+        if "component" in req_data:
+            req.component = req_data["component"]
+
+        # label
+        if "label" in req_data:
+            for label in req_data["label"]:
+                if label not in req.label:
+                    req.label.append(label)
+
+        # parent_idx
+        if "parent_idx" in req_data:
+            for parent_idx in req_data["parent_idx"]:
+                if parent_idx not in req.parent_idx:
+                    req.parent_idx.append(parent_idx)
+
+        # child_idx
+        if "child_idx" in req_data:
+            for child_idx in req_data["child_idx"]:
+                if child_idx not in req.child_idx:
+                    req.child_idx.append(child_idx)
+
+        # related_idx
+        if "related_idx" in req_data:
+            for related_idx in req_data["related_idx"]:
+                if related_idx not in req.related_idx:
+                    req.related_idx.append(related_idx)
+
+        # return the new requirement
+        return req
 
     def valid_index(index):
         """checks if the index is valid
@@ -164,3 +211,8 @@ class Requirement:
 
     def __repr__(self):
         return f"{self.index}"
+
+    def __eq__(self, other):
+        if not isinstance(other, Requirement):
+            return False
+        return self.index == other.index and self._folio == other._folio
