@@ -1,3 +1,5 @@
+"""This module contains the Folio class, which represents a .yaml file containing requirements."""
+
 import os
 import ruamel.yaml
 from validate import Validator
@@ -59,7 +61,7 @@ class Folio:
             with open(self._path, "r") as file:
                 data = yaml.load(file)
         except Exception:
-            self._validator.file_note(self, f"Error parsing .yaml file.", problem=True)
+            self._validator.file_note(self, "Error parsing .yaml file.", problem=True)
             self._valid = False
 
         # these checks make sure data was returned
@@ -101,7 +103,8 @@ class Folio:
             if requirement in parsed_requirements:
                 self._validator.file_note(
                     self,
-                    f"Duplicate requirement with index <{key}> found in file. Second instance deleted.",
+                    f"Duplicate requirement with index <{key}> found in file. "
+                    + "Second instance deleted.",
                     problem=True,
                 )
                 # this does not make the file invalid, just skips the requirement

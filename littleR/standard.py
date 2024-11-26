@@ -172,7 +172,7 @@ class Standard:
                 )
                 self._project_path = ""
         except Exception:
-            self._validator.note(f"Error finding project path.", problem=True)
+            self._validator.note("Error finding project path.", problem=True)
             self._project_path = ""
 
         # customer folder
@@ -184,7 +184,7 @@ class Standard:
                 )
                 self._customer_path = ""
         except Exception:
-            self._validator.note(f"Error finding customer path.", problem=True)
+            self._validator.note("Error finding customer path.", problem=True)
             self._customer_path = ""
 
     def _get_folios(self):

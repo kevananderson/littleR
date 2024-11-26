@@ -204,7 +204,7 @@ class Requirement:
             if Requirement.is_new_index(index):
                 return int(index[3:])
             return int(index[1:])
-        except:
+        except Exception:
             return 0
 
     def __str__(self):

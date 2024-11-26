@@ -36,7 +36,7 @@ def cli():
             break
 
         except IndexError:
-            print(f"Invalid option, please enter number from the list.")
+            print("Invalid option, please enter number from the list.")
 
 
 def print_cli_options(selections):
