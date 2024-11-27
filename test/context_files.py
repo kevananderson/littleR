@@ -18,6 +18,9 @@ def scratch_path():
 
 @pytest.fixture
 def customer_file():
-    return os.path.join(
-        os.path.dirname(__file__), "support", "validate", "customer.yaml"
-    )
+    return os.path.join(os.path.dirname(__file__), "support", "file", "customer.yaml")
+
+
+@pytest.fixture
+def software_file():
+    return os.path.join(os.path.dirname(__file__), "support", "file", "software.yaml")

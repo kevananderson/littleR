@@ -10,7 +10,7 @@ def reports_text():
         + "This is a problem.",
         "validator_file_notes": "Validation Report\n"
         + "Problems: 1\n\n"
-        + "File: test/support/validate/customer.yaml\n"
+        + "File: test/support/file/customer.yaml\n"
         + "\t\tThis is a note.\n"
         + "\t\tThis is a problem.",
     }

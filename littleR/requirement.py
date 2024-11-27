@@ -116,8 +116,9 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
             content["related_idx"] = self.related_idx
 
         data = {self.index: content}
-
-        text = yaml.dump_to_string(data)
+        
+        #the method exists even though pylint cannot see it.
+        text = yaml.dump_to_string(data) # pylint: disable=no-member
         return text
 
     def factory(
