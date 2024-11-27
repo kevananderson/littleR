@@ -87,8 +87,8 @@ uninstall:
 .PHONY: help
 help:
 	@echo Targets:
-	@echo   env        - Create a virtual environment and install dependancies.
-	@echo   all        - Create environment, install dependancies, and build package.
+	@echo   env        - Create a virtual environment and install dependencies.
+	@echo   all        - Create environment, install dependencies, and build package.
 	@echo   install    - Install dependencies from requirements.txt.
 	@echo   format	   - Format the code using Black.
 	@echo   test       - Run tests.

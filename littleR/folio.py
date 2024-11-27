@@ -2,8 +2,8 @@
 
 import os
 import ruamel.yaml
-from validate import Validator
-from requirement import Requirement
+from littleR.validate import Validator
+from littleR.requirement import Requirement
 
 
 class Folio:

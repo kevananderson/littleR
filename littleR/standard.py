@@ -2,9 +2,9 @@
 
 import os
 import ruamel.yaml
-from validate import Validator
-from requirement import Requirement
-from folio import Folio
+from littleR.validate import Validator
+from littleR.requirement import Requirement
+from littleR.folio import Folio
 
 
 class Standard:  # pylint: disable=too-many-instance-attributes

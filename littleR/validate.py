@@ -1,8 +1,7 @@
 """Contains classes that deal with validation of the Standard."""
 
 import os
-from folio import Folio
-from requirement import Requirement
+from littleR.requirement import Requirement
 
 
 class Validator:
@@ -77,33 +76,32 @@ class Validator:
         if problem:
             self._problem_count += 1
 
-    def file_note(self, folio, message, problem=False):
+    def file_note(self, file_path, message, problem=False):
         """Add a note to the validation report for a specific file.
 
         Args:
-            folio (Folio): The folio (file) to add the note about.
+            file_path (str): The file to add the note about.
             message (str): The message to add to the report.
             problem (bool): True if the note is a problem, False otherwise.
 
         Raises:
-            TypeError: If the folio is not a valid instance of Folio, the message
-                is not a string, or the problem is not a boolean
+            TypeError: If the file_path is not a string, the message is not a string,
+                or the problem is not a boolean.
         """
         # verify input
-        if not isinstance(folio, Folio) or not folio.valid():
-            raise TypeError("folio must be a valid instance of Folio")
+        if not isinstance(file_path, str) or not os.path.isfile(file_path):
+            raise TypeError("file_path must be a valid file path")
         if not isinstance(message, str):
             raise TypeError("message must be a string")
         if not isinstance(problem, bool):
             raise TypeError("problem must be a boolean")
 
         # get the file note, f
-        path = folio.path()
-        if path in self.file_notes:
-            f = self.file_notes[path]
+        if file_path in self.file_notes:
+            f = self.file_notes[file_path]
         else:
-            f = FileNote(folio)
-            self.file_notes[path] = f
+            f = FileNote(file_path)
+            self.file_notes[file_path] = f
 
         # add the message to the folio validator
         f.note(message)
@@ -137,16 +135,16 @@ class Validator:
         if path in self.file_notes:
             f = self.file_notes[path]
         else:
-            f = FileNote(requirement.folio())
+            f = FileNote(requirement.path())
             self.file_notes[path] = f
 
         # get the index note, i
-        index = requirement.index
-        if index in self.index_notes:
-            i = self.index_notes[index]
+        requirement = requirement.index
+        if requirement in self.index_notes:
+            i = self.index_notes[requirement]
         else:
             i = IndexNote(requirement)
-            self.index_notes[index] = i
+            self.index_notes[requirement] = i
 
         # add the message to the index note
         i.note(message)
@@ -176,35 +174,36 @@ class Validator:
         report += "Problems: " + str(self._problem_count) + "\n\n"
         for note in self.notes:
             report += note + "\n"
-        report += "\n"
+        if len(self.notes) > 0:
+            report += "\n"
         for f in self.file_notes.values():
             report += f.report()
-        return report
+        return report.strip()
 
 
 class FileNote:
     """The FileNote class stores notes about a file (Folio).
 
     Attributes:
-        _folio (Folio): The folio object that the notes are about.
+        _path (str): The file that the notes are about.
         notes (list): A list of notes for the file.
         index_notes (list): A list of index validators for the file.
     """
 
-    def __init__(self, folio):
+    def __init__(self, file_path):
         """Create a new FileNote object.
 
         Args:
-            folio (Folio): The folio object (file) that the notes are about.
+            file_path (str): The file that the notes are about.
 
         Raises:
             TypeError: If the folio is not a valid instance of Folio.
         """
         # verify input
-        if not isinstance(folio, Folio):
-            raise TypeError("folio must be an instance of Folio")
+        if not isinstance(file_path, str) or not os.path.isfile(file_path):
+            raise TypeError("file_path must be a valid file path.")
 
-        self._folio = folio
+        self._path = file_path
         self.notes = []
         self.index_notes = []
 
@@ -251,8 +250,8 @@ class FileNote:
         Returns:
             str: The report for the file's portion.
         """
-        path = self._folio.path()
-        report = f"File: {path}\n"
+        relative_path = os.path.relpath(self._path, os.getcwd()).replace("\\", "/")
+        report = f"File: {relative_path}\n"
         for note in self.notes:
             report += "\t\t" + note + "\n"
         report += "\n"

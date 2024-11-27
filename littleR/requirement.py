@@ -1,14 +1,14 @@
 """Requirement class for the littleR project."""
 
+import os
 import ruamel.yaml
-from folio import Folio
 
 
 class Requirement:  # pylint: disable=too-many-instance-attributes
     """Requirement class describing a requirement.
 
     Attributes:
-        _folio (Folio): the folio (file) containing the requirement.
+        _path (str): the file containing the requirement.
         enabled (bool): True if the requirement is enabled, False otherwise.
             Used to hide a requirement without deleting it.
         index (str): the index of the requirement.
@@ -38,7 +38,7 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
     def __init__(self):
         """Create a new Requirement object."""
         # set default values for all fields
-        self._folio = None
+        self._path = None
 
         self.enabled = True
 
@@ -68,15 +68,7 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
         Returns:
             str: the path to the file defining the requirement
         """
-        return self._folio.path()
-
-    def folio(self):
-        """Returns the Folio object that created the requirement.
-
-        Returns:
-            Folio: the Folio object that created the requirement
-        """
-        return self._folio
+        return self._path
 
     def int_index(self):
         """Returns the index as an integer value.
@@ -128,13 +120,15 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
         text = yaml.dump_to_string(data)
         return text
 
-    def factory(folio, req_data=None):  # pylint: disable=E0213,R0912
+    def factory(
+        file_path, req_data=None
+    ):  # pylint: disable=no-self-argument,too-many-branches
         """Creates a new Requirement object.
 
         The req_data (requirement data) comes from reading a .yaml file.
 
         Args:
-            folio (Folio): the folio (file) containing the requirement.
+            file_path (str): the file containing the requirement.
             req_data (dict): a dictionary containing the requirement data.
 
         Returns:
@@ -146,8 +140,8 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
             ValueError: if the req_data is not a dictionary
         """
         # verify the input
-        if not isinstance(folio, Folio) or not folio.valid():  # pylint: disable=E1101
-            raise TypeError("folio must be a valid instance of Folio")
+        if not isinstance(file_path, str) and os.path.isfile(file_path):
+            raise TypeError("file_path must be a valid file name")
         if req_data is None:
             raise ValueError("req_dict must be a dictionary")
 
@@ -155,7 +149,7 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
         req = Requirement()
 
         # folio
-        req._folio = folio  # pylint: disable=W0212
+        req._path = file_path  # pylint: disable=protected-access
 
         # index
         if "index" in req_data:
@@ -212,7 +206,7 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
         # return the new requirement
         return req
 
-    def valid_index(index):  # pylint: disable=E0213,R0911
+    def valid_index(index):  # pylint: disable=no-self-argument
         """Checks if the index is valid.
 
         Args:
@@ -228,31 +222,33 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
             return True
         if len(index) != 9:
             return False
-        if index[0] != "r":  # pylint: disable=E1136
+        if index[0] != "r":  # pylint: disable=unsubscriptable-object
             return False
-        if not index[1:].isdigit():  # pylint: disable=E1136
-            return False
-        idx = Requirement.get_int_index(index)
-        if idx == 0:
+        if not index[1:].isdigit():  # pylint: disable=unsubscriptable-object
             return False
         return True
 
-    def is_new_index(index):  # pylint: disable=E0213
+    def is_new_index(index):  # pylint: disable=no-self-argument
         """Checks if the index is new.
+
+        Args:
+            index (str): the index to check
 
         Returns:
             bool: True if the requirement is new, False otherwise
         """
-        if index[0:3] != "new":  # pylint: disable=E1136
+        # verify the input
+        if not isinstance(index, str):
             return False
-        if not index[3:].isdigit():  # pylint: disable=E1136
+        if len(index) < 4:
             return False
-        idx = Requirement.get_int_index(index)
-        if idx == 0:
+        if index[0:3] != "new":  # pylint: disable=unsubscriptable-object
+            return False
+        if not index[3:].isdigit():  # pylint: disable=unsubscriptable-object
             return False
         return True
 
-    def get_int_index(index):  # pylint: disable=E0213
+    def get_int_index(index):  # pylint: disable=no-self-argument
         """Converts the index to an integer value.
 
         Args:
@@ -263,12 +259,11 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
             int: the integer value of the index
             0: if the index is not valid
         """
-        try:
-            if Requirement.is_new_index(index):
-                return int(index[3:])  # pylint: disable=E1136
-            return int(index[1:])  # pylint: disable=E1136
-        except Exception:
-            return 0
+        if Requirement.is_new_index(index):
+            return int(index[3:])  # pylint: disable=unsubscriptable-object
+        if Requirement.valid_index(index):
+            return int(index[1:])  # pylint: disable=unsubscriptable-object
+        return 0
 
     def __str__(self):
         return f"Requirement({self.index})"
@@ -279,4 +274,4 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
     def __eq__(self, other):
         if not isinstance(other, Requirement):
             return False
-        return self.index == other.index and self._folio == other._folio
+        return self.index == other.index and self._path == other._path
