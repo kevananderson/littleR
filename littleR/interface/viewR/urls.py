@@ -1,3 +1,5 @@
+"""Defines URL patterns for viewR."""
+
 from django.urls import path
 
 from . import views

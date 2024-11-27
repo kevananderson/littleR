@@ -1,0 +1,9 @@
+[MAIN]
+init-hook='import sys; sys.path.append("./littleR")'
+
+[BASIC]
+module-rgx=(([a-z_][a-z0-9_]*)|(littleR))$ # Regular expression matching correct function names
+
+[FORMAT]
+max-line-length = 88  # Set your desired line length here
+   

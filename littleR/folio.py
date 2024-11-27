@@ -1,4 +1,4 @@
-"""This module contains the Folio class, which represents a .yaml file containing requirements."""
+"""This module contains the Folio class."""
 
 import os
 import ruamel.yaml
@@ -7,8 +7,34 @@ from requirement import Requirement
 
 
 class Folio:
+    """The Folio class represents a .yaml file containing requirements.
+
+    The class is responsible for reading and writing the file, as well
+    as parsing the contents to create Requirement objects.
+
+    Attributes:
+        _path (str): The path to the .yaml file.
+        _validator (Validator): The validator object to use for validation.
+        _valid (bool): True if the Folio is linked to a valid file, False otherwise.
+        _raw_contents (str): The raw contents of the file.
+        _requirements (list): The list of Requirement objects created from the file.
+            This list is only populated just before writing the file.
+    """
 
     def __init__(self, path, validator):
+        """Create a new Folio object.
+
+        File is read at object creation and parsed to check for validity.
+
+        Args:
+            path (str): The path to the .yaml file.
+            validator (Validator): The validator object to use for validation.
+
+        Raises:
+            TypeError: If the path is not a string or the validator is not a
+                Validator object.
+            ValueError: If the path does not end with .yaml or the file does not exist.
+        """
         # verify the input
         if not isinstance(path, str):
             raise TypeError("The path must be a string")
@@ -34,12 +60,36 @@ class Folio:
         self.parse_file()
 
     def path(self):
+        """Get the path to the .yaml file.
+
+        Returns:
+            str: The path to the .yaml file.
+        """
         return self._path
 
     def valid(self):
+        """Check if the Folio is linked to a valid file.
+
+        Returns:
+            bool: True if the Folio is linked to a valid file, False otherwise.
+        """
         return self._valid
 
     def parse_file(self, force=False):
+        """Parse the contents of the file to create Requirement objects.
+
+        This process also validates the contents of the file.
+        If the file is not valid, an empty list is returned.
+        If the file has already been parsed and marked invalid,
+        the file is not re-parsed unless force is True.
+
+        Args:
+            force (bool): If True, the file is re-parsed even if
+                it has been marked invalid.
+
+        Returns:
+            list: A list of Requirement objects created from the file.
+        """
         # verify input
         if not isinstance(force, bool):
             raise TypeError("force must be a boolean")
@@ -58,7 +108,7 @@ class Folio:
         # read the file and parse it to verify the contents
         data = None
         try:
-            with open(self._path, "r") as file:
+            with open(self._path, "r", encoding="utf-8") as file:
                 data = yaml.load(file)
         except Exception:
             self._validator.file_note(self, "Error parsing .yaml file.", problem=True)
@@ -126,6 +176,17 @@ class Folio:
         return parsed_requirements
 
     def link_requirement(self, requirement):
+        """Link a Requirement object to the Folio.
+
+        This is only called just before the file is written.
+        With the requirements linked, the file can be written.
+
+        Args:
+            requirement (Requirement): The Requirement object to link.
+
+        Raises:
+            TypeError: If the requirement is not a Requirement object.
+        """
         # verify the input
         if not isinstance(requirement, Requirement):
             raise TypeError("requirement must be an instance of Requirement")
@@ -133,6 +194,13 @@ class Folio:
             self._requirements.append(requirement)
 
     def write_file(self):
+        """Write the contents of the Folio to the .yaml file.
+
+        Before calling this, ensure that requirement objects are
+        linked to the Folio by calling link_requirement().
+
+        If the Folio is not valid, the file is not written.
+        """
         # we don't need to write an invalid file
         if not self.valid():
             return
@@ -152,14 +220,14 @@ class Folio:
 
         # write the file
         try:
-            with open(self._path, "w") as file:
+            with open(self._path, "w", encoding="utf-8") as file:
                 file.write(text)
         except Exception:
             self._validator.file_note(self, "Error writing file.", problem=True)
 
     def _read_file(self):
         try:
-            with open(self._path, "r") as file:
+            with open(self._path, "r", encoding="utf-8") as file:
                 data = file.read()
         except Exception:
             self._validator.file_note(self, "Error reading file.", problem=True)

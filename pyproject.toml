@@ -40,3 +40,14 @@ Repository = "https://github.com/kevananderson/littleR"
 # All the following settings are optional:
 include = ["littleR"]
 exclude = ["test","docs","project","reports","customer"]  # empty by default
+
+[tool.ruff.lint]
+select = [
+    "D",#docstring
+]
+ignore = [
+    "D105", # Missing docstring in magic method
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

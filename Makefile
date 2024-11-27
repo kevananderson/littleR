@@ -39,10 +39,10 @@ format: $(ACTIVATE)
 	@echo ***********
 	@echo format code
 	@echo ***********
-	$(PYTHON) -m black ./littleR ./test
+	$(PYTHON) -m black ./$(NAME) ./test
 
 .PHONY: test
-test: $(ACTIVATE) activate
+test: $(ACTIVATE)
 	@echo *********
 	@echo run tests
 	@echo *********
@@ -53,14 +53,14 @@ lint: $(ACTIVATE)
 	@echo *************
 	@echo run fast lint
 	@echo *************
-	$(PYTHON) -m ruff check ./littleR
+	$(PYTHON) -m ruff check ./$(NAME)
 
 .PHONY: pylint
 pylint: $(ACTIVATE)
 	@echo *************
 	@echo run slow lint
 	@echo *************
-	$(PYTHON) -m pylint ./littleR
+	$(PYTHON) -m pylint ./$(NAME)
 
 .PHONY: package
 package: $(ACTIVATE) install

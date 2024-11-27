@@ -1,6 +1,6 @@
 pytest
 wheel
-ruamel.yaml
+ruamel.yaml.string
 sphinx
 Django
 ruff

@@ -1,5 +1,4 @@
-"""
-WSGI config for siteR project.
+"""WSGI config for siteR project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

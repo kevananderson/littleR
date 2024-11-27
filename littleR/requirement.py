@@ -1,10 +1,42 @@
+"""Requirement class for the littleR project."""
+
 import ruamel.yaml
 from folio import Folio
 
 
-class Requirement:
+class Requirement:  # pylint: disable=too-many-instance-attributes
+    """Requirement class describing a requirement.
+
+    Attributes:
+        _folio (Folio): the folio (file) containing the requirement.
+        enabled (bool): True if the requirement is enabled, False otherwise.
+            Used to hide a requirement without deleting it.
+        index (str): the index of the requirement.
+            Looks like r00000000 or new1.
+        type (str): the type of the requirement.
+            The list of types is defined in the configuration file.
+        title (str): the title of the requirement
+            The title is a short description of the requirement.
+        requirement (str): the requirement itself.
+            The requirement is a statement of what the system must do.
+        description (str): the description of the requirement
+            Provides additional information about the requirement.
+        assumptions (str): the assumptions of the requirement
+            Provides assumptions made when defining the requirement.
+        component (str): the component of the requirement
+            The component of the system that the requirement defines.
+        label (list<str>): the labels of the requirement
+            Labels are used to categorize and filter requirements.
+        parent_idx (list<str>): the indexes of the parent requirements
+        child_idx (list<str>): the indexes of the child requirements
+        related_idx (list<str>): the indexes of the related requirements
+        parent (list<Requirement>): the parent requirements
+        child (list<Requirement>): the child requirements
+        related (list<Requirement>): the related requirements
+    """
 
     def __init__(self):
+        """Create a new Requirement object."""
         # set default values for all fields
         self._folio = None
 
@@ -31,13 +63,23 @@ class Requirement:
         self.related = []
 
     def path(self):
-        return self.folio.path()
+        """Returns the path where the requirement is defined.
+
+        Returns:
+            str: the path to the file defining the requirement
+        """
+        return self._folio.path()
 
     def folio(self):
+        """Returns the Folio object that created the requirement.
+
+        Returns:
+            Folio: the Folio object that created the requirement
+        """
         return self._folio
 
     def int_index(self):
-        """converts the index as an integer value
+        """Returns the index as an integer value.
 
         Returns:
             int: the integer value of the index
@@ -46,7 +88,7 @@ class Requirement:
         return Requirement.get_int_index(self.index)
 
     def is_new(self):
-        """checks if the requirement is new
+        """Checks if the requirement is new.
 
         Returns:
             bool: True if the requirement is new, False otherwise
@@ -54,7 +96,12 @@ class Requirement:
         return Requirement.is_new_index(self.index)
 
     def to_yaml(self):
-        yaml = ruamel.yaml.YAML()
+        """Converts the requirement to a .yaml string.
+
+        Returns:
+            str: the requirement converted to a .yaml string
+        """
+        yaml = ruamel.yaml.YAML(typ=["rt", "string"])
         content = {}
 
         content["enabled"] = self.enabled
@@ -81,9 +128,25 @@ class Requirement:
         text = yaml.dump_to_string(data)
         return text
 
-    def factory(folio, req_data=None):
+    def factory(folio, req_data=None):  # pylint: disable=E0213,R0912
+        """Creates a new Requirement object.
+
+        The req_data (requirement data) comes from reading a .yaml file.
+
+        Args:
+            folio (Folio): the folio (file) containing the requirement.
+            req_data (dict): a dictionary containing the requirement data.
+
+        Returns:
+            Requirement: the new Requirement object
+            None: if the requirement could not be created
+
+        Raises:
+            TypeError: if the folio is not a valid instance of Folio
+            ValueError: if the req_data is not a dictionary
+        """
         # verify the input
-        if not isinstance(folio, Folio) or not folio.valid():
+        if not isinstance(folio, Folio) or not folio.valid():  # pylint: disable=E1101
             raise TypeError("folio must be a valid instance of Folio")
         if req_data is None:
             raise ValueError("req_dict must be a dictionary")
@@ -92,7 +155,7 @@ class Requirement:
         req = Requirement()
 
         # folio
-        req.folio = folio
+        req._folio = folio  # pylint: disable=W0212
 
         # index
         if "index" in req_data:
@@ -149,8 +212,8 @@ class Requirement:
         # return the new requirement
         return req
 
-    def valid_index(index):
-        """checks if the index is valid
+    def valid_index(index):  # pylint: disable=E0213,R0911
+        """Checks if the index is valid.
 
         Args:
             index (str): the index to check
@@ -165,32 +228,32 @@ class Requirement:
             return True
         if len(index) != 9:
             return False
-        if index[0] != "r":
+        if index[0] != "r":  # pylint: disable=E1136
             return False
-        if not index[1:].isdigit():
+        if not index[1:].isdigit():  # pylint: disable=E1136
             return False
         idx = Requirement.get_int_index(index)
         if idx == 0:
             return False
         return True
 
-    def is_new_index(index):
-        """checks if the index is new
+    def is_new_index(index):  # pylint: disable=E0213
+        """Checks if the index is new.
 
         Returns:
             bool: True if the requirement is new, False otherwise
         """
-        if index[0:3] != "new":
+        if index[0:3] != "new":  # pylint: disable=E1136
             return False
-        if not index[3:].isdigit():
+        if not index[3:].isdigit():  # pylint: disable=E1136
             return False
         idx = Requirement.get_int_index(index)
         if idx == 0:
             return False
         return True
 
-    def get_int_index(index):
-        """converts the index to an integer value
+    def get_int_index(index):  # pylint: disable=E0213
+        """Converts the index to an integer value.
 
         Args:
             index (str): the index to convert to an integer
@@ -202,8 +265,8 @@ class Requirement:
         """
         try:
             if Requirement.is_new_index(index):
-                return int(index[3:])
-            return int(index[1:])
+                return int(index[3:])  # pylint: disable=E1136
+            return int(index[1:])  # pylint: disable=E1136
         except Exception:
             return 0
 

@@ -1,3 +1,5 @@
+"""Standard class for the littleR project."""
+
 import os
 import ruamel.yaml
 from validate import Validator
@@ -5,8 +7,38 @@ from requirement import Requirement
 from folio import Folio
 
 
-class Standard:
+class Standard:  # pylint: disable=too-many-instance-attributes
+    """The Standard class collects all the requirements.
+
+    The standard is the collection of all requirements for a project.
+    The class is responsible for reading and writing the requirements.
+    It also links the requirements together and validates the standard.
+
+    Attributes:
+        _name (str): The name of the standard.
+        _requirements (dict): A dictionary of all requirements indexed by their index.
+        _tree (list): A list of the requirements in tree form.
+        _new_requirements (dict): A dictionary to translate new
+            requirements into the correct format.
+        _max_index (int): The maximum index of the requirements.
+            The next requirement will be one higher than this.
+        _folios (dict): A dictionary of folios indexed by their path.
+        _config (dict): The configuration for the standard.
+        _validator (Validator): The validator object to use for validation.
+        _project_path (str): The path to the project folder.
+        _customer_path (str): The path to the customer folder.
+    """
+
     def __init__(self, name="Working"):
+        """Create a new Standard object.
+
+        Args:
+            name (str): The name of the standard.
+                Used when comparing two standards.
+
+        Raises:
+            TypeError: If the name is not a string.
+        """
         # verify the input
         if not isinstance(name, str):
             raise TypeError("name must be a string")
@@ -28,7 +60,7 @@ class Standard:
         # the config for the standard
         self._config = {}
 
-        # this is the start of the validator object, all validation starts with the standard
+        # this is where we create the validator for the whole standard.
         validator_path = os.path.join(os.getcwd(), "reports/verification")
         self._validator = Validator(validator_path)
 
@@ -37,6 +69,18 @@ class Standard:
         self._customer_path = ""
 
     def read(self, directory=None):
+        """Read the requirements from the directory.
+
+        This method reads the requirements from the directory,
+        populating the requirements and the folios.
+
+        Args:
+            directory (str): The directory to read the requirements from.
+                If None, the current working directory is used.
+
+        Raises:
+            ValueError: If the directory is not a valid directory.
+        """
         # verify the input
         if directory is None:
             directory = os.getcwd()
@@ -62,6 +106,7 @@ class Standard:
         self._link_requirements()
 
     def write(self):
+        """Write the requirements back to file after editing."""
         # link the requirements to their folios
         for req in self._requirements.values():
             req.folio().link_requirement(req)
@@ -71,9 +116,24 @@ class Standard:
             folio.write_file()
 
     def file_count(self):
-        return len(self.folios)
+        """Return the number of requirement files found.
+
+        Returns:
+            int: The number of requirement files found.
+        """
+        return len(self._folios)
 
     def add_requirement(self, requirement):
+        """Add a requirement to the standard.
+
+        The requirement must be unique in the standard.
+
+        Args:
+            requirement (Requirement): The requirement to add.
+
+        Raises:
+            TypeError: If the requirement is not a Requirement object.
+        """
         # verify the input
         if not isinstance(requirement, Requirement):
             raise TypeError("requirement must be an instance of Requirement")
@@ -99,13 +159,12 @@ class Standard:
         # add the requirement to the dictionary
         self._requirements[requirement.index] = requirement
 
-        # we will also record some information about the requirements (new and max index) here.
+        # we will also record some information about new and max index here.
         if requirement.is_new():
             self._new_requirements[requirement.index] = "Unknown"
         else:
             idx = requirement.int_index()
-            if idx > self._max_index:
-                self._max_index = idx
+            self._max_index = max(self._max_index, idx)
 
     # read methods
 
@@ -128,7 +187,7 @@ class Standard:
 
         config = None
         try:
-            with open(config_path, "r") as file:
+            with open(config_path, "r", encoding="utf-8") as file:
                 config = yaml.load(file)
         except Exception:
             self._validator.note("Error parsing config file.", problem=True)
@@ -194,23 +253,23 @@ class Standard:
             return
 
         # project path
-        for root, _, files in os.walk(self.project_path):
+        for root, _, files in os.walk(self._project_path):
             for file in files:
                 if file.endswith(".yaml"):
-                    folio = Folio(os.path.join(root, file), self.validator)
+                    folio = Folio(os.path.join(root, file), self._validator)
                     if folio.valid():
                         self._add_folio(folio)
 
         # customer path
-        for root, _, files in os.walk(self.customer_path):
+        for root, _, files in os.walk(self._customer_path):
             for file in files:
                 if file.endswith(".yaml"):
-                    folio = Folio(os.path.join(root, file), self.validator)
+                    folio = Folio(os.path.join(root, file), self._validator)
                     if folio.valid():
                         self._add_folio(folio)
 
         if self.file_count() == 0:
-            self.validator.note("No requirement files found.", problem=True)
+            self._validator.note("No requirement files found.", problem=True)
 
     def _add_folio(self, folio):
         # verify input
@@ -219,12 +278,12 @@ class Standard:
 
         # add the folio to the dictionary
         path = folio.path()
-        if path not in self.folios:
-            self.folios[path] = folio
+        if path not in self._folios:
+            self._folios[path] = folio
 
     def _add_requirements(self):
         # verify required input
-        if len(self.folios) == 0:
+        if len(self._folios) == 0:
             self._validator.note(
                 "Requirements cannot be added if there are no requirement files."
             )  # problem already reported
@@ -246,7 +305,7 @@ class Standard:
 
     def _update_new_requirements(self):
         # for each new requirement, we will replace it with a valid index
-        for new_index in self._new_requirements.keys():
+        for new_index in self._new_requirements:
             # get the requirement with the new index
             req = self._requirements.pop(new_index)
 
@@ -261,8 +320,8 @@ class Standard:
             # add the requirement back to the dictionary
             self._requirements[index] = req
 
-    def _link_requirements(self):
-        """link the requirements
+    def _link_requirements(self):  # pylint: disable=too-many-branches
+        """Link the requirements.
 
         for each requirement's parent_idx, child_idx, and related_idx, we will:
             * link requirements
@@ -316,7 +375,7 @@ class Standard:
                     ]
 
                 if related_idx not in self._requirements:
-                    self.validator.index_note(
+                    self._validator.index_note(
                         req,
                         f"Related index not found: {related_idx}.",
                         problem=True,

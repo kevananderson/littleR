@@ -1,5 +1,4 @@
-"""
-ASGI config for siteR project.
+"""ASGI config for siteR project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
