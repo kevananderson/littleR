@@ -6,6 +6,7 @@ PIP := $(VENV)/Scripts/pip
 ACTIVATE := $(VENV)/Scripts/activate
 DIST := dist
 EGGINFO := $(NAME).egg-info
+SPHINX := docs
 
 .PHONY: env
 env: $(ACTIVATE) install
@@ -62,6 +63,13 @@ pylint: $(ACTIVATE)
 	@echo *************
 	$(PYTHON) -m pylint ./$(NAME)
 
+.PHONY: html
+html: $(ACTIVATE)
+	@echo *************
+	@echo generate HTML
+	@echo *************
+	$(PYTHON) -m sphinx -b html $(SPHINX)/source $(SPHINX)/build
+
 .PHONY: package
 package: $(ACTIVATE) install
 	@echo *************
@@ -94,6 +102,7 @@ help:
 	@echo   test       - Run tests.
 	@echo   lint	   - Run the fast ruff linter.
 	@echo   pylint     - Run the slower pylint linter.
+	@echo   html       - Generate HTML documentation. Calls sphinx make.
 	@echo   package    - Build the package.
 	@echo   clean      - Remove Package build files.
 	@echo   uninstall  - Remove the virtual environment.

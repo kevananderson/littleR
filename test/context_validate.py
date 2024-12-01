@@ -13,5 +13,11 @@ def reports_text():
         + "File: test/support/file/customer.yaml\n"
         + "\t\tThis is a note.\n"
         + "\t\tThis is a problem.",
+        "validator_index_note": "Validation Report\n"
+        + "Problems: 1\n\n"
+        + "File: test/support/file/software.yaml\n\n"
+        + "\tIndex: r00000045\n"
+        + "\t\tThis is a note.\n"
+        + "\t\tThis is a problem.",
     }
     return text

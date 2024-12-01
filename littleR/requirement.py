@@ -116,14 +116,13 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
             content["related_idx"] = self.related_idx
 
         data = {self.index: content}
-        
-        #the method exists even though pylint cannot see it.
-        text = yaml.dump_to_string(data) # pylint: disable=no-member
+
+        # the method exists even though pylint cannot see it.
+        text = yaml.dump_to_string(data)  # pylint: disable=no-member
         return text
 
-    def factory(
-        file_path, req_data=None
-    ):  # pylint: disable=no-self-argument,too-many-branches
+    @staticmethod
+    def factory(file_path, req_data=None):  # pylint: disable=too-many-branches
         """Creates a new Requirement object.
 
         The req_data (requirement data) comes from reading a .yaml file.
@@ -207,7 +206,8 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
         # return the new requirement
         return req
 
-    def valid_index(index):  # pylint: disable=no-self-argument
+    @staticmethod
+    def valid_index(index):
         """Checks if the index is valid.
 
         Args:
@@ -229,7 +229,8 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
             return False
         return True
 
-    def is_new_index(index):  # pylint: disable=no-self-argument
+    @staticmethod
+    def is_new_index(index):
         """Checks if the index is new.
 
         Args:
@@ -249,7 +250,8 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
             return False
         return True
 
-    def get_int_index(index):  # pylint: disable=no-self-argument
+    @staticmethod
+    def get_int_index(index):
         """Converts the index to an integer value.
 
         Args:

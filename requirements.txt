@@ -2,6 +2,8 @@ pytest
 wheel
 ruamel.yaml.string
 sphinx
+sphinx-autoapi
+furo
 Django
 ruff
 pylint

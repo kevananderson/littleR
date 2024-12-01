@@ -139,12 +139,11 @@ class Validator:
             self.file_notes[path] = f
 
         # get the index note, i
-        requirement = requirement.index
-        if requirement in self.index_notes:
-            i = self.index_notes[requirement]
+        if requirement.index in self.index_notes:
+            i = self.index_notes[requirement.index]
         else:
             i = IndexNote(requirement)
-            self.index_notes[requirement] = i
+            self.index_notes[requirement.index] = i
 
         # add the message to the index note
         i.note(message)
@@ -179,6 +178,14 @@ class Validator:
         for f in self.file_notes.values():
             report += f.report()
         return report.strip()
+
+    def path(self):
+        """Get the path to the directory where the validation report will be saved.
+
+        Returns:
+            str: The path to the directory where the validation report will be saved.
+        """
+        return self._path
 
 
 class FileNote:
