@@ -105,11 +105,32 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         # link the requirements together
         self._link_requirements()
 
-    def write(self):
-        """Write the requirements back to file after editing."""
+    def write(self, test_directory=None):   
+        """Write the requirements back to file after editing.
+        
+        Args:
+            test_directory (str): DO NOT USE. This is for testing only.
+        """
+        #verify the input
+        if test_directory is not None:
+            if not isinstance(test_directory, str):
+                raise TypeError("test_directory must be a string")
+            if not os.path.isdir(test_directory):
+                raise ValueError("test_directory must be a valid directory")
+            
+        testing = test_directory is not None
+            
         # link the requirements to their folios
         for req in self._requirements.values():
-            req.folio().link_requirement(req)
+            if testing:
+                #get file name of the requirement
+                req_file_name = os.path.basename(req.path())
+                req_path = os.path.join(test_directory, req_file_name)
+                req.set_path(req_path)
+
+            #get the folio for the requirement
+            req_folio = self._folios[req.path()]
+            req_folio.link_requirement(req)
 
         # write the requirements to the directory
         for folio in self._folios.values():
@@ -165,6 +186,16 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         else:
             idx = requirement.int_index()
             self._max_index = max(self._max_index, idx)
+
+    def add_folio(self, folio):
+        # verify input
+        if not isinstance(folio, Folio) or not folio.valid():
+            raise TypeError("folio must be a valid instance of Folio")
+
+        # add the folio to the dictionary
+        path = folio.path()
+        if path not in self._folios:
+            self._folios[path] = folio
 
     # read methods
 
@@ -271,16 +302,6 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         if self.file_count() == 0:
             self._validator.note("No requirement files found.", problem=True)
 
-    def _add_folio(self, folio):
-        # verify input
-        if not isinstance(folio, Folio) or not folio.valid():
-            raise TypeError("folio must be a valid instance of Folio")
-
-        # add the folio to the dictionary
-        path = folio.path()
-        if path not in self._folios:
-            self._folios[path] = folio
-
     def _add_requirements(self):
         # verify required input
         if len(self._folios) == 0:
@@ -295,7 +316,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
 
             if len(raw_requirements) == 0:
                 self._validator.file_note(
-                    folio,
+                    folio.path(),
                     "No raw requirements found in file.",  # problem already reported
                 )
                 continue

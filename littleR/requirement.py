@@ -70,6 +70,17 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
         """
         return self._path
 
+    def set_path(self, file_path):
+        """Sets the path where the requirement is defined.
+
+        Args:
+            file_path (str): the path to the file defining the requirement
+        """
+        #verify the input
+        if not isinstance(file_path, str) and os.path.isfile(file_path):
+            raise TypeError("file_path must be a valid file name.")
+        self._path = file_path
+        
     def int_index(self):
         """Returns the index as an integer value.
 

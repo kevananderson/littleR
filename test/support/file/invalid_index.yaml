@@ -17,3 +17,23 @@ r00000045:
   related_idx:
   - r00000004
   - r00000005
+
+r0000A045:
+  enabled: true
+  type: Software
+  title: Software Title
+  requirement: The software shall be this.
+  description: This is a description.
+  assumptions: These are the assumptions.
+  component: Software Component
+  label:
+  - label1
+  - label2
+  parent_idx:
+  - r00000001
+  child_idx:
+  - r00000002
+  - r00000003
+  related_idx:
+  - r00000004
+  - r00000005

@@ -111,20 +111,23 @@ class Folio:
             with open(self._path, "r", encoding="utf-8") as file:
                 data = yaml.load(file)
         except Exception:
-            self._validator.file_note(self, "Error parsing .yaml file.", problem=True)
-            self._valid = False
-
-        # these checks make sure data was returned
-        if data is None:
             self._validator.file_note(
-                self, "No data read from file file.", problem=True
+                self.path(), "Error parsing .yaml file.", problem=True
             )
             self._valid = False
             return []
 
-        if len(data) == 0:
+        # these checks make sure data was returned
+        if data is None:
             self._validator.file_note(
-                self, "No requirements found in file.", problem=True
+                self.path(), "No data read from file file.", problem=True
+            )
+            self._valid = False
+            return []
+
+        if not isinstance(data, dict) and len(data) > 0:
+            self._validator.file_note(
+                self.path(), "No requirements found in file.", problem=True
             )
             self._valid = False
             return []
@@ -134,40 +137,26 @@ class Folio:
         for key, value in data.items():
 
             if not Requirement.valid_index(key):
-                self._validator.file_note(self, f"Invalid index: {key}.", problem=True)
+                self._validator.file_note(
+                    self.path(), f"Invalid index: {key}.", problem=True
+                )
                 # this does not make the file invalid, just skips the requirement
                 continue
 
             value["index"] = key
-            requirement = Requirement.factory(self, value)
+            requirement = Requirement.factory(self.path(), value)
 
-            if requirement is None:
-                self._validator.file_note(
-                    self,
-                    f"Error creating requirement with key <{key}> from file.",
-                    problem=True,
-                )
-                # this does not make the file invalid, just skips the requirement
-                continue
-
-            if requirement in parsed_requirements:
-                self._validator.file_note(
-                    self,
-                    f"Duplicate requirement with index <{key}> found in file. "
-                    + "Second instance deleted.",
-                    problem=True,
-                )
-                # this does not make the file invalid, just skips the requirement
-                continue
+            #we cannot get a duplicate index - we will not check for one.
 
             # now we add the requirement to the list of requirements
-
             parsed_requirements.append(requirement)
 
         # now check if we have any requirements
         if len(parsed_requirements) == 0:
             self._validator.file_note(
-                self, "No requirements were able to be created from file.", problem=True
+                self.path(),
+                "No requirements were able to be created from file.",
+                problem=True,
             )
             self._valid = False
             return []
@@ -223,14 +212,14 @@ class Folio:
             with open(self._path, "w", encoding="utf-8") as file:
                 file.write(text)
         except Exception:
-            self._validator.file_note(self, "Error writing file.", problem=True)
+            self._validator.file_note(self.path(), "Error writing file.", problem=True)
 
     def _read_file(self):
         try:
             with open(self._path, "r", encoding="utf-8") as file:
                 data = file.read()
         except Exception:
-            self._validator.file_note(self, "Error reading file.", problem=True)
+            self._validator.file_note(self.path(), "Error reading file.", problem=True)
             self._valid = False
             return None
         return data

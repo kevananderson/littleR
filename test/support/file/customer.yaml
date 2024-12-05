@@ -1,0 +1,5 @@
+new1:
+  enabled: true
+  type: Software
+  title: This is a new title
+  requirement: The requirement shall be this.

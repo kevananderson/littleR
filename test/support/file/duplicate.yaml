@@ -17,3 +17,11 @@ r00000045:
   related_idx:
   - r00000004
   - r00000005
+
+r00000045:
+  enabled: true
+  type: Software
+  title: Software Title
+  requirement: The software shall be this.
+  parent_idx:
+  - r00000001

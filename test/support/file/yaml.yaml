@@ -1,0 +1,9 @@
+test:
+  customer:
+    name: John Doe
+    email: big@john.doe
+  
+stuff:
+  software:
+    name: Software Title
+    description: This is a description.
