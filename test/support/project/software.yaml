@@ -1,0 +1,22 @@
+new03:
+  enabled: true
+  type: software
+  title: Read and Write file.
+  requirement: The software shall be able to read and write multiple
+    files, stored within a parent directory,that contain the sum of 
+    the requirements.
+  description: The user will want to store things in multiple files.
+    However, the user will want to store all of the requirements in
+    a parent directory. Any other orgainzation will be up to the user.
+  parent_idx:
+  - new01
+
+new04:
+  enabled: true
+  type: software
+  title: YAML file format.
+  requirement: The requirements shall stored in the YAML file format.
+  description: See how easy this is to read.
+  parent_idx:
+  - new01
+

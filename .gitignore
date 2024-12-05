@@ -2,9 +2,9 @@
 .vscode
 __pycache__
 config.yaml
-project
-reports
-customer
+/project
+/reports
+/customer
 docs/build
 dist
 *.egg-info
