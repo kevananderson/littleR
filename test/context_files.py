@@ -59,8 +59,15 @@ def duplicate_file():
     return os.path.join(
         os.path.dirname(__file__), "support", "file", "duplicate.yaml"
     )
+
 @pytest.fixture
 def yaml_file():
     return os.path.join(
         os.path.dirname(__file__), "support", "file", "yaml.yaml"
+    )
+
+@pytest.fixture
+def support_directory():
+    return os.path.join(
+        os.path.dirname(__file__), "support"
     )

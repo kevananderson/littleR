@@ -1,0 +1,16 @@
+r00000003:
+  enabled: true
+  type: customer
+  title: Requirements captured.
+  requirement: The requirements shall be captured.
+  description: The requirements shall be captured in a 
+    reputable program.
+  assumptions: Not all clients capture requirements. This
+    is a good practice.
+  label:
+  - Acme
+  child_idx:
+  - r00000001
+  - r00000002
+
+

@@ -27,21 +27,32 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         _validator (Validator): The validator object to use for validation.
         _project_path (str): The path to the project folder.
         _customer_path (str): The path to the customer folder.
+        _test_directory (str): The path to the test directory.
     """
 
-    def __init__(self, name="Working"):
+    def __init__(self, name="Working", test_directory=None):
         """Create a new Standard object.
 
         Args:
-            name (str): The name of the standard.
-                Used when comparing two standards.
+            name (str): The name of the standard. Used when comparing 
+                two standards.
+            test_directory (str): The path where the standard will output.
+                Used for testing.
 
         Raises:
             TypeError: If the name is not a string.
+            TypeError: If the test_directory is not a string.
+            ValueError: If the test_directory is not a valid directory.
         """
         # verify the input
         if not isinstance(name, str):
             raise TypeError("name must be a string")
+        if test_directory is not None:
+            if not isinstance(test_directory, str):
+                raise TypeError("test_directory must be a string")
+            if not os.path.isdir(test_directory):
+                raise ValueError("test_directory must be a valid directory")
+            
 
         # the name of the standard
         self._name = name
@@ -60,8 +71,13 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         # the config for the standard
         self._config = {}
 
+        # test directory
+        self._test_directory = test_directory
+
         # this is where we create the validator for the whole standard.
         validator_path = os.path.join(os.getcwd(), "reports/verification")
+        if self._test_directory is not None:
+            validator_path = self._test_directory
         self._validator = Validator(validator_path)
 
         # project and customer paths
@@ -187,16 +203,6 @@ class Standard:  # pylint: disable=too-many-instance-attributes
             idx = requirement.int_index()
             self._max_index = max(self._max_index, idx)
 
-    def add_folio(self, folio):
-        # verify input
-        if not isinstance(folio, Folio) or not folio.valid():
-            raise TypeError("folio must be a valid instance of Folio")
-
-        # add the folio to the dictionary
-        path = folio.path()
-        if path not in self._folios:
-            self._folios[path] = folio
-
     # read methods
 
     def _get_config(self, directory):
@@ -254,27 +260,19 @@ class Standard:  # pylint: disable=too-many-instance-attributes
             raise ValueError("The directory must be a valid directory")
 
         # project folder
-        try:
-            self._project_path = os.path.join(directory, "project")
-            if not os.path.isdir(self._project_path):
-                self._validator.note(
-                    f"Project path not found: {self._project_path}", problem=True
-                )
-                self._project_path = ""
-        except Exception:
-            self._validator.note("Error finding project path.", problem=True)
+        self._project_path = os.path.join(directory, "project")
+        if not os.path.isdir(self._project_path):
+            self._validator.note(
+                f"Project path not found: {self._project_path}", problem=True
+            )
             self._project_path = ""
-
+    
         # customer folder
-        try:
-            self._customer_path = os.path.join(directory, "customer")
-            if not os.path.isdir(self._customer_path):
-                self._validator.note(
-                    f"Customer path not found: {self._customer_path}", problem=True
-                )
-                self._customer_path = ""
-        except Exception:
-            self._validator.note("Error finding customer path.", problem=True)
+        self._customer_path = os.path.join(directory, "customer")
+        if not os.path.isdir(self._customer_path):
+            self._validator.note(
+                f"Customer path not found: {self._customer_path}"
+            )
             self._customer_path = ""
 
     def _get_folios(self):
@@ -301,6 +299,16 @@ class Standard:  # pylint: disable=too-many-instance-attributes
 
         if self.file_count() == 0:
             self._validator.note("No requirement files found.", problem=True)
+
+    def _add_folio(self, folio):
+        # verify input
+        if not isinstance(folio, Folio) or not folio.valid():
+            raise TypeError("folio must be a valid instance of Folio")
+
+        # add the folio to the dictionary
+        path = folio.path()
+        if path not in self._folios:
+            self._folios[path] = folio
 
     def _add_requirements(self):
         # verify required input
@@ -366,8 +374,8 @@ class Standard:  # pylint: disable=too-many-instance-attributes
 
                 parent_req = self._requirements[parent_idx]
 
-                if parent_req not in req.parents:
-                    req.parents.append(parent_req)
+                if parent_req not in req.parent:
+                    req.parent.append(parent_req)
 
             # child_idx
             for i, child_idx in enumerate(req.child_idx):
@@ -385,8 +393,8 @@ class Standard:  # pylint: disable=too-many-instance-attributes
 
                 child_req = self._requirements[child_idx]
 
-                if child_req not in req.children:
-                    req.children.append(child_req)
+                if child_req not in req.child:
+                    req.child.append(child_req)
 
             # related_idx
             for i, related_idx in enumerate(req.related_idx):

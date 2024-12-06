@@ -9,14 +9,16 @@ new03:
     However, the user will want to store all of the requirements in
     a parent directory. Any other orgainzation will be up to the user.
   parent_idx:
-  - new01
+  - r00000001
 
-new04:
+r00000004:
   enabled: true
   type: software
   title: YAML file format.
   requirement: The requirements shall stored in the YAML file format.
   description: See how easy this is to read.
   parent_idx:
-  - new01
+  - r00000001
+  related_idx:
+  - r00000002
 

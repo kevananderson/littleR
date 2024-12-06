@@ -1,4 +1,4 @@
-new01:
+r00000001:
   enabled: true
   type: service
   title: Requirements captured in human readable format.
@@ -10,7 +10,7 @@ new01:
   label:
   - data
 
-new02:
+r00000002:
   enabled: true
   type: service
   title: Configuration managment by GIT version control.
@@ -27,9 +27,9 @@ new05:
   type: service
   title: Manual checkin and checkout.
   requirement: The project shall able to be managed like a 
-  software project. The user can check in and check out the
-  project. Code reviews can be done in the same way as 
-  software.
+    software project. The user can check in and check out the
+    project. Code reviews can be done in the same way as 
+    software.
   assumptions: We dont want to restrict someone's workflow.
   parent_idx:
-  - new02
+  - r00000002
