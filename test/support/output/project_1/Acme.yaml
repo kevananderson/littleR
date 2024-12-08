@@ -3,10 +3,8 @@ r00000003:
   type: customer
   title: Requirements captured.
   requirement: The requirements shall be captured.
-  description: The requirements shall be captured in a 
-    reputable program.
-  assumptions: Not all client's capture requirements. This
-    is a good practice.
+  description: The requirements shall be captured in a reputable program.
+  assumptions: Not all client's capture requirements. This is a good practice.
   label:
   - Acme
   child_idx:

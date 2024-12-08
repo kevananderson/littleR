@@ -7,7 +7,7 @@ new03:
     the requirements.
   description: The user will want to store things in multiple files.
     However, the user will want to store all of the requirements in
-    a parent directory. Any other orgainzation will be up to the user.
+    a parent directory. Any other organization will be up to the user.
   parent_idx:
   - r00000001
 

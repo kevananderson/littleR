@@ -239,7 +239,7 @@ class Folio:
                     req, "Error creating .yaml text from requirement.", problem=True
                 )
                 continue
-            text += req_text + "\n"
+            text += req_text + "\n\n"
         text = text.strip()
 
         # write the file

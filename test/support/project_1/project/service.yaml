@@ -13,7 +13,7 @@ r00000001:
 r00000002:
   enabled: true
   type: service
-  title: Configuration managment by GIT version control.
+  title: Configuration management by GIT version control.
   requirement: The requirements shall be managed using GIT.
   description: This will have a similar workflow to software
     development.
@@ -25,11 +25,11 @@ r00000002:
 new05:
   enabled: true
   type: service
-  title: Manual checkin and checkout.
+  title: Manual check-in and check-out.
   requirement: The project shall able to be managed like a 
     software project. The user can check in and check out the
     project. Code reviews can be done in the same way as 
     software.
-  assumptions: We dont want to restrict someone's workflow.
+  assumptions: We don't want to restrict someone's workflow.
   parent_idx:
   - r00000002

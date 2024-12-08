@@ -319,3 +319,14 @@ class IndexNote:
             report += f"\t\t{note}\n"
         report += "\n"
         return report
+
+    def __str__(self):
+        return f"Validator({self.problem_count()} problems)"
+    
+    def __repr__(self):
+        return f"Validator"
+    
+    def __eq__(self, other):
+        if not isinstance(other, Validator):
+            return False
+        return self._path == other._path

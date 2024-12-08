@@ -3,7 +3,6 @@ import os
 import shutil
 
 def delete_contents(path):
-    return
     if os.path.exists(path) and os.path.isdir(path):
         for file_name in os.listdir(path):
             file_path = os.path.join(path, file_name)
@@ -15,6 +14,7 @@ def delete_contents(path):
 @pytest.fixture
 def scratch_path():
     path = os.path.join(os.path.dirname(__file__), "scratch")
+    os.makedirs(path, exist_ok=True)
     delete_contents(path)
     yield path
     delete_contents(path)

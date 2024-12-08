@@ -191,6 +191,14 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         """
         return list(self._folios.keys())
     
+    def name(self):
+        """Return the name of the standard.
+
+        Returns:
+            str: The name of the standard.
+        """
+        return self._name
+    
     # read methods
 
     def _get_config(self, directory):
@@ -410,10 +418,10 @@ class Standard:  # pylint: disable=too-many-instance-attributes
     # dunders
 
     def __str__(self):
-        return f"Standard: with {len(self._requirements)} requirements."
+        return f"Standard({self._name}): with {len(self._requirements)} requirements."
 
     def __repr__(self):
-        return f"Standard({len(self._requirements)})"
+        return f"Standard({self._name})"
 
     def __eq__(self, other):
         if not isinstance(other, Standard):

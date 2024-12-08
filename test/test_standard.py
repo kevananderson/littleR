@@ -18,9 +18,39 @@ def compare_file_contents(test_files, output_directory):
 
 def test_standard(project_1_directory, scratch_path, project_1_output_directory):
     s = Standard("Project 1",scratch_path)
+    assert s.name() == "Project 1"
+    assert s.file_count() == 0
+    assert s.get_folio_paths() == []
+    assert str(s) == "Standard(Project 1): with 0 requirements."    
     s.read(project_1_directory)
     assert s.file_count() == 3
+    assert str(s) == "Standard(Project 1): with 6 requirements."    
     s.write()
     folio_paths = s.get_folio_paths()
     compare_file_contents(folio_paths, project_1_output_directory)
+
+def test_standard_init(scratch_path):
+    s = Standard("Project 1",scratch_path)
+    assert s.name() == "Project 1"
+    
+    # test invalid names
+    with pytest.raises(TypeError):
+        s = Standard(1)
+    with pytest.raises(TypeError):
+        s = Standard({"name":"Project 1"})
+    with pytest.raises(TypeError):        
+        s = Standard(["Project 1"])
+
+    # test invalid test paths
+    with pytest.raises(TypeError):
+        s = Standard("Project 1",1)
+    with pytest.raises(TypeError):
+        s = Standard("Project 1",Validator())
+    with pytest.raises(ValueError):
+        s = Standard("Project 1","")
+    with pytest.raises(ValueError):
+        path = os.path.join(scratch_path, "project_none")
+        s = Standard("Project 1",path)
+    
+
 
