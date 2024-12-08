@@ -80,7 +80,7 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
             TypeError: if the file_path is not a string
             ValueError: if the file_path could not be created
         """
-        #verify the input
+        # verify the input
         if not isinstance(file_path, str):
             raise TypeError("file_path must be a string.")
         if not os.path.isfile(file_path):
@@ -91,7 +91,7 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
             except Exception as e:
                 raise ValueError("file_path could not be created.") from e
         self._path = file_path
-        
+
     def int_index(self):
         """Returns the index as an integer value.
 

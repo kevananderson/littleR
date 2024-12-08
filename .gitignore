@@ -1,7 +1,7 @@
 .venv
 .vscode
 __pycache__
-config.yaml
+/config.yaml
 /project
 /reports
 /customer

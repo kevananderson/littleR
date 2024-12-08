@@ -63,12 +63,14 @@ def test_folio_invalid_index_file(invalid_index_file, scratch_path, reports_text
     assert f"Folio({folio.path()})" == str(folio)
     assert v.report() == reports_text["folio_invalid_index_file"]
 
+
 def test_folio_duplicate_file(duplicate_file, scratch_path, reports_text):
     v = Validator(scratch_path)
     folio = Folio(duplicate_file, v)
     assert folio.valid() == False
     assert f"Folio({folio.path()})" == str(folio)
     assert v.report() == reports_text["folio_duplicate_file"]
+
 
 def test_folio_yaml_file(yaml_file, scratch_path, reports_text):
     v = Validator(scratch_path)
@@ -77,34 +79,36 @@ def test_folio_yaml_file(yaml_file, scratch_path, reports_text):
     assert f"Folio({folio.path()})" == str(folio)
     assert v.report() == reports_text["folio_yaml_file"]
 
+
 def test_folio_invalid_file(invalid_file, scratch_path):
     v = Validator(scratch_path)
     with pytest.raises(ValueError):
         folio = Folio(invalid_file, v)
 
-def test_folio_link_and_write(scratch_path,requirement_yaml):
-    #create the file in scratch
+
+def test_folio_link_and_write(scratch_path, requirement_yaml):
+    # create the file in scratch
     software_file = os.path.join(scratch_path, "software.yaml")
-    software_yaml = requirement_yaml["requirement"] 
+    software_yaml = requirement_yaml["requirement"]
     with open(software_file, "w", encoding="utf-8") as file:
         file.write(software_yaml)
 
-    #create the folio and read the requirements
+    # create the folio and read the requirements
     v = Validator(scratch_path)
     folio = Folio(software_file, v)
     requirements = folio.parse_file()
     assert len(requirements) == 1
 
-    #delete the file
+    # delete the file
     os.unlink(software_file)
     assert os.path.isfile(software_file) == False
 
-    #link and write the file
+    # link and write the file
     for req in requirements:
         folio.link_requirement(req)
     folio.write_file()
 
-    #read the file in scratch
+    # read the file in scratch
     with open(software_file, "r") as file:
         data = file.read()
-    assert data == software_yaml    
+    assert data == software_yaml

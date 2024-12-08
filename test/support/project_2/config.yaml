@@ -1,0 +1,5 @@
+configuration: 
+  version: 0.0.1
+project:
+  name: project_2
+  description: This is a project with only a single configuration file.

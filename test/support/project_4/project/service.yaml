@@ -1,0 +1,37 @@
+r00000001:
+  enabled: true
+  type: service
+  title: Requirements captured in human readable format.
+  requirement: The requirements shall be captured in a human 
+    readable format.
+  description: Consider JSON, YAML, or XML.
+  assumptions: There is an established python library for
+    parsing the format.
+  label:
+  - data
+  parent_idx:
+  - r00000015
+
+r00000002:
+  enabled: true
+  type: service
+  title: Configuration management by GIT version control.
+  requirement: The requirements shall be managed using GIT.
+  description: This will have a similar workflow to software
+    development.
+  assumptions: The tool is for software development. Future 
+    development could make it easy for non developers to use.
+  label:
+  - configuration_management
+
+new05:
+  enabled: true
+  type: service
+  title: Manual check-in and check-out.
+  requirement: The project shall able to be managed like a 
+    software project. The user can check in and check out the
+    project. Code reviews can be done in the same way as 
+    software.
+  assumptions: We don't want to restrict someone's workflow.
+  parent_idx:
+  - r00000002

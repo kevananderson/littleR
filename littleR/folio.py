@@ -49,9 +49,9 @@ class Folio:
         # store the validator
         self._validator = validator
         self._valid = True
-        
-        #test directory, is None unless set by the the standard
-        #this must be initialize before the file is read
+
+        # test directory, is None unless set by the the standard
+        # this must be initialize before the file is read
         self._test_directory = None
 
         # read the file and store its contents, this is flat information
@@ -66,7 +66,7 @@ class Folio:
     def path(self):
         """Get the path to the .yaml file.
 
-        This is usually the path that was read. When testing, 
+        This is usually the path that was read. When testing,
         this will return the path to the test directory.
 
         Returns:
@@ -160,7 +160,7 @@ class Folio:
             req = Requirement.factory(self._path, value)
 
             # change the path if there is a test folder
-            if self._test_directory is not None:    
+            if self._test_directory is not None:
                 req_file_name = os.path.basename(req.path())
                 req_path = os.path.join(self._test_directory, req_file_name)
                 req.set_path(req_path)
@@ -205,11 +205,11 @@ class Folio:
         """Set the directory where output will be written to.
 
         Args:
-            test_directory (str): The directory where output 
+            test_directory (str): The directory where output
                 will be written to.
 
         Raises:
-            ValueError: If the test directory is not a valid 
+            ValueError: If the test directory is not a valid
                 directory.
         """
         # verify the input

@@ -5,6 +5,7 @@ import ruamel.yaml
 from littleR.validate import Validator
 from littleR.requirement import Requirement
 from littleR.folio import Folio
+from littleR.configuration import Configuration
 
 
 class Standard:  # pylint: disable=too-many-instance-attributes
@@ -34,7 +35,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         """Create a new Standard object.
 
         Args:
-            name (str): The name of the standard. Used when comparing 
+            name (str): The name of the standard. Used when comparing
                 two standards.
             test_directory (str): The path where the standard will output.
                 Used for testing.
@@ -52,7 +53,6 @@ class Standard:  # pylint: disable=too-many-instance-attributes
                 raise TypeError("test_directory must be a string")
             if not os.path.isdir(test_directory):
                 raise ValueError("test_directory must be a valid directory")
-            
 
         # the name of the standard
         self._name = name
@@ -69,7 +69,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         self._folios = {}
 
         # the config for the standard
-        self._config = {}
+        self._config = None
 
         # test directory
         self._test_directory = test_directory
@@ -100,7 +100,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         # verify the input
         if directory is None:
             directory = os.getcwd()
-        if not isinstance(directory,str):
+        if not isinstance(directory, str):
             raise TypeError("The directory must be a string")
         if not os.path.isdir(directory):
             raise ValueError("The directory must be a valid directory")
@@ -123,8 +123,8 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         # link the requirements together
         self._link_requirements()
 
-    def write(self):   
-        """Write the requirements back to file after editing."""            
+    def write(self):
+        """Write the requirements back to file after editing."""
         # link the requirements to their folios
         for req in self._requirements.values():
             req_folio = self._folios[req.path()]
@@ -161,17 +161,13 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         if requirement.index in self._requirements:
             first_req = self._requirements[requirement.index]
             second_req = requirement
+            second_file = os.path.basename(second_req.path())
 
             if first_req != second_req:
                 self._validator.index_note(
                     first_req,
-                    f"Requirement duplicated in file: {second_req.path()}.",
+                    f"Requirement duplicated  file: {second_file}.",
                     problem=True,
-                )
-                self._validator.index_note(
-                    second_req,
-                    f"Requirement duplicated in file: {first_req.path()}.",
-                    # problem already reported
                 )
             return
 
@@ -192,7 +188,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
             list: A list of the paths to the folios.
         """
         return list(self._folios.keys())
-    
+
     def name(self):
         """Return the name of the standard.
 
@@ -200,7 +196,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
             str: The name of the standard.
         """
         return self._name
-    
+
     def validator(self):
         """Return the validator for the standard.
 
@@ -208,7 +204,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
             Validator: The validator for the standard.
         """
         return self._validator
-    
+
     # read methods
 
     def _get_config(self, directory):
@@ -222,41 +218,12 @@ class Standard:  # pylint: disable=too-many-instance-attributes
 
         if not os.path.isfile(config_path):
             self._validator.note(
-                "Config file not found. config.yaml should be at project root.", problem=True
+                "Config file not found. config.yaml should be at project root.",
+                problem=True,
             )
             return
 
-        yaml = ruamel.yaml.YAML()
-
-        config = None
-        try:
-            with open(config_path, "r", encoding="utf-8") as file:
-                config = yaml.load(file)
-        except Exception:
-            self._validator.note("Error parsing config file.", problem=True)
-            return
-
-        # these checks make sure data was returned
-        if config is None:
-            self._validator.note("No data read from config file.", problem=True)
-            return
-
-        # check that the config is a dictionary
-        if not isinstance(config, dict):
-            self._validator.note(
-                "Config file must be read in as a dictionary.", problem=True
-            )
-            return
-
-        # check that the config is not empty
-        if len(config) == 0:
-            self._validator.note(
-                "No configuration information found in file.", problem=True
-            )
-            return
-
-        # store the config
-        self._config = config
+        self._config = Configuration(self._validator).read(config_path)
 
     def _get_paths(self, directory):
         # verify the input
@@ -269,16 +236,14 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         self._project_path = os.path.join(directory, "project")
         if not os.path.isdir(self._project_path):
             self._validator.note(
-                f"Project path not found: {self._project_path}", problem=True
+                "Project path not found at project root.", problem=True
             )
             self._project_path = ""
-    
+
         # customer folder
         self._customer_path = os.path.join(directory, "customer")
         if not os.path.isdir(self._customer_path):
-            self._validator.note(
-                f"Customer path not found: {self._customer_path}"
-            )
+            self._validator.note("Customer path not found at project root.")
             self._customer_path = ""
 
     def _get_folios(self):
@@ -310,7 +275,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         # verify input
         if not isinstance(folio, Folio) or not folio.valid():
             raise TypeError("folio must be a valid instance of Folio")
-        
+
         if self._test_directory is not None:
             folio.set_test_directory(self._test_directory)
 
@@ -330,13 +295,6 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         # get the requirements from each folio
         for folio in self._folios.values():
             raw_requirements = folio.parse_file()
-
-            if len(raw_requirements) == 0:
-                self._validator.file_note(
-                    folio.path(),
-                    "No raw requirements found in file.",  # problem already reported
-                )
-                continue
 
             for req in raw_requirements:
                 self.add_requirement(req)
@@ -368,59 +326,63 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         for req in self._requirements.values():
 
             # parent_idx
-            for i, parent_idx in enumerate(req.parent_idx):
+            for i, p_idx in enumerate(req.parent_idx):
 
-                if parent_idx in self._new_requirements:
-                    parent_idx = req.parent_idx[i] = self._new_requirements[parent_idx]
+                if p_idx in self._new_requirements:
+                    p_idx = req.parent_idx[i] = self._new_requirements[p_idx]
 
-                if parent_idx not in self._requirements:
+                if p_idx not in self._requirements:
                     self._validator.index_note(
                         req,
-                        f"Parent index not found: {parent_idx}.",
+                        f"Parent index not found: {p_idx}.",
                         problem=True,
                     )
+                    # remove the invalid parent index
+                    req.parent_idx.remove(p_idx)
                     continue
 
-                parent_req = self._requirements[parent_idx]
+                parent_req = self._requirements[p_idx]
 
                 if parent_req not in req.parent:
                     req.parent.append(parent_req)
 
             # child_idx
-            for i, child_idx in enumerate(req.child_idx):
+            for i, c_idx in enumerate(req.child_idx):
 
-                if child_idx in self._new_requirements:
-                    child_idx = req.child_idx[i] = self._new_requirements[child_idx]
+                if c_idx in self._new_requirements:
+                    c_idx = req.child_idx[i] = self._new_requirements[c_idx]
 
-                if child_idx not in self._requirements:
+                if c_idx not in self._requirements:
                     self._validator.index_note(
                         req,
-                        f"Child index not found: {child_idx}.",
+                        f"Child index not found: {c_idx}.",
                         problem=True,
                     )
+                    # remove the invalid child index
+                    req.child_idx.remove(c_idx)
                     continue
 
-                child_req = self._requirements[child_idx]
+                child_req = self._requirements[c_idx]
 
                 if child_req not in req.child:
                     req.child.append(child_req)
 
             # related_idx
-            for i, related_idx in enumerate(req.related_idx):
-                if related_idx in self._new_requirements:
-                    related_idx = req.related_idx[i] = self._new_requirements[
-                        related_idx
-                    ]
+            for i, r_idx in enumerate(req.related_idx):
+                if r_idx in self._new_requirements:
+                    r_idx = req.related_idx[i] = self._new_requirements[r_idx]
 
-                if related_idx not in self._requirements:
+                if r_idx not in self._requirements:
                     self._validator.index_note(
                         req,
-                        f"Related index not found: {related_idx}.",
+                        f"Related index not found: {r_idx}.",
                         problem=True,
                     )
+                    # remove the invalid related index
+                    req.related_idx.remove(r_idx)
                     continue
 
-                related_req = self._requirements[related_idx]
+                related_req = self._requirements[r_idx]
 
                 if related_req not in req.related:
                     req.related.append(related_req)

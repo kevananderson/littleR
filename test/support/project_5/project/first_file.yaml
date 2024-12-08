@@ -1,0 +1,11 @@
+r00000001:
+  enabled: true
+  type: service
+  title: Requirements captured in human readable format.
+  requirement: The requirements shall be captured in a human 
+    readable format.
+  description: Consider JSON, YAML, or XML.
+  assumptions: There is an established python library for
+    parsing the format.
+  label:
+  - data
