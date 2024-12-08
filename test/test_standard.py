@@ -52,5 +52,14 @@ def test_standard_init(scratch_path):
         path = os.path.join(scratch_path, "project_none")
         s = Standard("Project 1",path)
     
+def test_standard_read(project_1_directory, scratch_path, reports_text):
+    s = Standard("Project 1",scratch_path)
+    with pytest.raises(ValueError):
+        s.read("")
+    with pytest.raises(TypeError):
+        s.read(1)
+    with pytest.raises(TypeError):
+        s.read(Requirement())
 
-
+    s.read(project_1_directory)
+    assert s.validator().report() == reports_text["standard_read"]

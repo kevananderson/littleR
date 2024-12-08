@@ -50,5 +50,8 @@ def reports_text():
         + "\t\tInvalid index: test.\n" 
         + "\t\tInvalid index: stuff.\n"
         + "\t\tNo requirements were able to be created from file.",
+        "standard_read": "Validation Report\n"
+        + "Problems: 1\n\n"
+        + "Config file not found. config.yaml should be at project root.",
     }
     return text

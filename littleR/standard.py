@@ -100,6 +100,8 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         # verify the input
         if directory is None:
             directory = os.getcwd()
+        if not isinstance(directory,str):
+            raise TypeError("The directory must be a string")
         if not os.path.isdir(directory):
             raise ValueError("The directory must be a valid directory")
 
@@ -199,6 +201,14 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         """
         return self._name
     
+    def validator(self):
+        """Return the validator for the standard.
+
+        Returns:
+            Validator: The validator for the standard.
+        """
+        return self._validator
+    
     # read methods
 
     def _get_config(self, directory):
@@ -212,7 +222,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
 
         if not os.path.isfile(config_path):
             self._validator.note(
-                f"Config file not found at {config_path}", problem=True
+                "Config file not found. config.yaml should be at project root.", problem=True
             )
             return
 
