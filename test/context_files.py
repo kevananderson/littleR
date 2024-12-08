@@ -3,6 +3,7 @@ import os
 import shutil
 
 def delete_contents(path):
+    return
     if os.path.exists(path) and os.path.isdir(path):
         for file_name in os.listdir(path):
             file_path = os.path.join(path, file_name)
@@ -70,4 +71,16 @@ def yaml_file():
 def support_directory():
     return os.path.join(
         os.path.dirname(__file__), "support"
+    )
+
+@pytest.fixture
+def project_1_directory():
+    return os.path.join(
+        os.path.dirname(__file__), "support", "project_1"
+    )
+
+@pytest.fixture
+def project_1_output_directory():
+    return os.path.join(
+        os.path.dirname(__file__), "support", "output","project_1"    
     )

@@ -75,10 +75,21 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
 
         Args:
             file_path (str): the path to the file defining the requirement
+
+        Raises:
+            TypeError: if the file_path is not a string
+            ValueError: if the file_path could not be created
         """
         #verify the input
-        if not isinstance(file_path, str) and os.path.isfile(file_path):
-            raise TypeError("file_path must be a valid file name.")
+        if not isinstance(file_path, str):
+            raise TypeError("file_path must be a string.")
+        if not os.path.isfile(file_path):
+            try:
+                os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                with open(file_path, "w", encoding="utf-8") as file:
+                    file.write("")
+            except Exception as e:
+                raise ValueError("file_path could not be created.") from e
         self._path = file_path
         
     def int_index(self):

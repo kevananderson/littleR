@@ -121,30 +121,10 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         # link the requirements together
         self._link_requirements()
 
-    def write(self, test_directory=None):   
-        """Write the requirements back to file after editing.
-        
-        Args:
-            test_directory (str): DO NOT USE. This is for testing only.
-        """
-        #verify the input
-        if test_directory is not None:
-            if not isinstance(test_directory, str):
-                raise TypeError("test_directory must be a string")
-            if not os.path.isdir(test_directory):
-                raise ValueError("test_directory must be a valid directory")
-            
-        testing = test_directory is not None
-            
+    def write(self):   
+        """Write the requirements back to file after editing."""            
         # link the requirements to their folios
         for req in self._requirements.values():
-            if testing:
-                #get file name of the requirement
-                req_file_name = os.path.basename(req.path())
-                req_path = os.path.join(test_directory, req_file_name)
-                req.set_path(req_path)
-
-            #get the folio for the requirement
             req_folio = self._folios[req.path()]
             req_folio.link_requirement(req)
 
@@ -203,6 +183,14 @@ class Standard:  # pylint: disable=too-many-instance-attributes
             idx = requirement.int_index()
             self._max_index = max(self._max_index, idx)
 
+    def get_folio_paths(self):
+        """Return the paths to the folios.
+
+        Returns:
+            list: A list of the paths to the folios.
+        """
+        return list(self._folios.keys())
+    
     # read methods
 
     def _get_config(self, directory):
@@ -304,6 +292,9 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         # verify input
         if not isinstance(folio, Folio) or not folio.valid():
             raise TypeError("folio must be a valid instance of Folio")
+        
+        if self._test_directory is not None:
+            folio.set_test_directory(self._test_directory)
 
         # add the folio to the dictionary
         path = folio.path()

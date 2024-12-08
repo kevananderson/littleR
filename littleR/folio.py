@@ -49,6 +49,10 @@ class Folio:
         # store the validator
         self._validator = validator
         self._valid = True
+        
+        #test directory, is None unless set by the the standard
+        #this must be initialize before the file is read
+        self._test_directory = None
 
         # read the file and store its contents, this is flat information
         self._raw_contents = self._read_file()
@@ -62,9 +66,15 @@ class Folio:
     def path(self):
         """Get the path to the .yaml file.
 
+        This is usually the path that was read. When testing, 
+        this will return the path to the test directory.
+
         Returns:
             str: The path to the .yaml file.
         """
+        if self._test_directory is not None:
+            file_name = os.path.basename(self._path)
+            return os.path.join(self._test_directory, file_name)
         return self._path
 
     def valid(self):
@@ -108,6 +118,7 @@ class Folio:
         # read the file and parse it to verify the contents
         data = None
         try:
+            # we want to read from the actual path of the file
             with open(self._path, "r", encoding="utf-8") as file:
                 data = yaml.load(file)
         except Exception:
@@ -144,12 +155,20 @@ class Folio:
                 continue
 
             value["index"] = key
-            requirement = Requirement.factory(self.path(), value)
+            # regardless of the "test_directory" we want to create the requirement
+            # from the path of the folio
+            req = Requirement.factory(self._path, value)
 
-            #we cannot get a duplicate index - we will not check for one.
+            # change the path if there is a test folder
+            if self._test_directory is not None:    
+                req_file_name = os.path.basename(req.path())
+                req_path = os.path.join(self._test_directory, req_file_name)
+                req.set_path(req_path)
+
+            # we cannot get a duplicate index - we will not check for one.
 
             # now we add the requirement to the list of requirements
-            parsed_requirements.append(requirement)
+            parsed_requirements.append(req)
 
         # now check if we have any requirements
         if len(parsed_requirements) == 0:
@@ -182,6 +201,22 @@ class Folio:
         if requirement not in self._requirements:
             self._requirements.append(requirement)
 
+    def set_test_directory(self, test_directory):
+        """Set the directory where output will be written to.
+
+        Args:
+            test_directory (str): The directory where output 
+                will be written to.
+
+        Raises:
+            ValueError: If the test directory is not a valid 
+                directory.
+        """
+        # verify the input
+        if not isinstance(test_directory, str) or not os.path.isdir(test_directory):
+            raise ValueError("The test directory must be a valid directory")
+        self._test_directory = test_directory
+
     def write_file(self):
         """Write the contents of the Folio to the .yaml file.
 
@@ -209,7 +244,8 @@ class Folio:
 
         # write the file
         try:
-            with open(self._path, "w", encoding="utf-8") as file:
+            # we write with the "path" so that the test directory is used
+            with open(self.path(), "w", encoding="utf-8") as file:
                 file.write(text)
         except Exception:
             self._validator.file_note(self.path(), "Error writing file.", problem=True)
@@ -228,7 +264,8 @@ class Folio:
         return f"Folio({self._path})"
 
     def __repr__(self):
-        return f"Folio({self._path})"
+        file_name = os.path.basename(self._path)
+        return f"Folio({file_name})"
 
     def __eq__(self, other):
         if not isinstance(other, Folio):
