@@ -1,7 +1,6 @@
 """Standard class for the littleR project."""
 
 import os
-import ruamel.yaml
 from littleR.validate import Validator
 from littleR.requirement import Requirement
 from littleR.folio import Folio
@@ -205,6 +204,28 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         """
         return self._validator
 
+    def get_requirement(self, index): #TODO: Test this method
+        """Return the requirement with the given index.
+
+        Args:
+            index (str): The index of the requirement to return.
+
+        Returns:
+            Requirement: The requirement with the given index.
+            None: If the requirement is not found.
+
+        Raises:
+            TypeError: If the index is not a string.
+            ValueError: If the index is not a valid requirement index.
+        """
+        # verify the input
+        if not isinstance(index, str):
+            raise TypeError("The index must be a string")
+        if not Requirement.valid_index(index):
+            raise ValueError("The index must be a valid requirement index")
+        
+        return self._requirements.get(index)
+    
     # read methods
 
     def _get_config(self, directory):
