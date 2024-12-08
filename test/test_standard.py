@@ -103,6 +103,7 @@ def test_standard_read_project_4(
     folio_paths = s.get_folio_paths()
     compare_file_contents(folio_paths, project_1_output_directory)
 
+
 def test_standard_read_project_5(project_5_directory, scratch_path, reports_text):
     # project 5 has duplicate requirements
     s = Standard("Project 5", scratch_path)
@@ -110,6 +111,3 @@ def test_standard_read_project_5(project_5_directory, scratch_path, reports_text
     print(f"\n{s.validator().report()}\n")
     compare_text(s.validator().report(), reports_text["standard_read_project_5"])
     assert s.validator().report() == reports_text["standard_read_project_5"]
-
-
-

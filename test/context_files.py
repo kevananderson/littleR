@@ -114,6 +114,7 @@ def project_3_directory():
 def project_4_directory():
     return os.path.join(os.path.dirname(__file__), "support", "project_4")
 
+
 @pytest.fixture
 def project_5_directory():
     return os.path.join(os.path.dirname(__file__), "support", "project_5")
