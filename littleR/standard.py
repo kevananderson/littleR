@@ -129,7 +129,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
 
     def write(self):
         """Write the requirements back to file after editing.
-        
+
         This method writes the requirements back to the files after editing.
 
         Returns:
@@ -144,7 +144,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         for folio in self._folios.values():
             folio.write_file()
 
-        #write the validator report
+        # write the validator report
         self._validator.write_report()
 
         return self
@@ -220,7 +220,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         """
         return self._validator
 
-    def get_requirement(self, index): #TODO: Test this method
+    def get_requirement(self, index):  # TODO: Test this method
         """Return the requirement with the given index.
 
         Args:
@@ -239,9 +239,9 @@ class Standard:  # pylint: disable=too-many-instance-attributes
             raise TypeError("The index must be a string")
         if not Requirement.valid_index(index):
             raise ValueError("The index must be a valid requirement index")
-        
+
         return self._requirements.get(index)
-    
+
     # read methods
 
     def _get_config(self, directory):

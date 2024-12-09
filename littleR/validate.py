@@ -40,7 +40,12 @@ class Validator:
         if not isinstance(path, str):
             raise TypeError("path must be a string")
         if not os.path.isdir(path):
-            raise ValueError("path must be a valid directory")
+            try:
+                os.makedirs(path, exist_ok=True)
+            except Exception as e:
+                raise ValueError(
+                    "Validator path must be a valid directory. Could not create directory."
+                ) from e
 
         # set the path
         self._path = path
@@ -179,7 +184,7 @@ class Validator:
             report += f.report()
         return report.strip()
 
-    def write_report(self): #TODO: test this method
+    def write_report(self):  # TODO: test this method
         """Write the validation report to a file.
 
         Raises:
@@ -189,7 +194,7 @@ class Validator:
         # verify the input
         if not isinstance(self._path, str):
             raise TypeError("The path must be a string.")
-        
+
         # create the report
         report = self.report()
 
@@ -210,17 +215,18 @@ class Validator:
         """
         return self._path
 
-    def report_path(self): #TODO: test this method
+    def report_path(self):  # TODO: test this method
         """Get the path to the validation report.
 
         Returns:
             str: The path to the validation report.
         """
         return os.path.join(self.path(), "validation_report.txt")
-    
+
     def __str__(self):
         return "Validator"
-    
+
+
 class FileNote:
     """The FileNote class stores notes about a file (Folio).
 

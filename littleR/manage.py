@@ -5,6 +5,7 @@ import shutil
 
 from littleR.standard import Standard
 
+
 def cli():
     """Command line interface for the littleR project.
 
@@ -17,14 +18,14 @@ def cli():
     """
     # setup functions that the user can call, see below for *Actions* defined locally
     selections = [
-        {"fn": _goodbye, "text": "Exit"},
-        {"fn": _new_project, "text": "Create New Project"},
+        {"fn": _goodbye, "text": "Exit."},
+        {"fn": _new_project, "text": "Create New Project."},
         {
             "fn": _littleR_project,
-            "text": "Start a new project with the requirements for the littleR Project",
+            "text": "Start a new project with the requirements for the littleR Project.",
         },
-        {"fn": _remove_project, "text": "Remove projects files"},
-        {"fn": _validate_project, "text": "Validate project requirements"},
+        {"fn": _remove_project, "text": "Remove projects files."},
+        {"fn": _validate_project, "text": "Validate project requirements."},
     ]
 
     while True:
@@ -138,7 +139,9 @@ def _validate_project():
     print(f"Problems found: {standard.validator().problem_count()}")
     if standard.validator().problem_count() > 0:
         print("Please review the problems and correct as needed.")
-        print(f"The report is located: {standard.validator().report_path().replace("\\", "/")}")
+        print(
+            f"The report is located: {standard.validator().report_path().replace("\\", "/")}"
+        )
 
 
 if __name__ == "__main__":

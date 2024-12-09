@@ -1,7 +1,8 @@
-new7:
+r00000009:
   enabled: true
   type: software
   title: CLI Options
-  requirement: The setup cli shall present the user with descriptive options to help setup the project.
+  requirement: The setup cli shall present the user with descriptive options to help
+    setup the project.
   parent_idx:
-  - new3
+  - r00000005

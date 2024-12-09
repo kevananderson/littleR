@@ -1,12 +1,11 @@
-new6:
+r00000008:
   enabled: true
   type: software
   title: Read and Write to Files.
-  requirement: The software shall be able to read and write multiple
-    files, stored within a parent directory,that contain the sum of 
-    the requirements.
-  description: The user will want to store things in multiple files.
-    However, the user will want to store all of the requirements in
-    a parent directory. Any other organization will be up to the user.
+  requirement: The software shall be able to read and write multiple files, stored
+    within a parent directory,that contain the sum of the requirements.
+  description: The user will want to store things in multiple files. However, the
+    user will want to store all of the requirements in a parent directory. Any other
+    organization will be up to the user.
   parent_idx:
   - r00000001

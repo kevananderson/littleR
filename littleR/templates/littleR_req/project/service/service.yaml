@@ -2,11 +2,9 @@ r00000001:
   enabled: true
   type: service
   title: Requirements captured in human readable format.
-  requirement: The requirements shall be captured in the human 
-    readable format YAML.
+  requirement: The requirements shall be captured in the human readable format YAML.
   description: Considered JSON, YAML, and XML. YAML was chosen for its ease of reading.
-  assumptions: There is an established python library for
-    parsing YAML.
+  assumptions: There is an established python library for parsing YAML.
   label:
   - data_storage
 
@@ -15,59 +13,63 @@ r00000002:
   type: service
   title: Configuration management by GIT version control.
   requirement: The requirements shall be managed using GIT.
-  description: This will have a similar workflow to software
-    development.
-  assumptions: The tool is for software development. Future 
-    development could make it easy for non developers to use.
+  description: This will have a similar workflow to software development.
+  assumptions: The tool is for software development. Future development could make
+    it easy for non developers to use.
   label:
   - configuration_management
 
-new1:
+r00000003:
   enabled: true
   type: service
   title: User Interface.
   requirement: There shall be a web based user interface.
   description: This will be in django.
-  assumptions: 
+  assumptions:
   label:
   - gui
 
-new2:
+r00000004:
   enabled: true
   type: service
   title: Project Verification.
-  requirement: There shall be command line interface for project verification. The results will be pass or fail.
-  description: This will allow the user to push to a main repository and the main repository will be able to verify the project. 
+  requirement: There shall be command line interface for project verification. The
+    results will be pass or fail.
+  description: This will allow the user to push to a main repository and the main
+    repository will be able to verify the project.
   label:
   - verification
 
-new3:
+r00000005:
   enabled: true
   type: service
   title: CLI Tasks.
-  requirement: There shall be a command line interface to help setup the project and start the GUI.
-  description: This will allow the user to push to a main repository and the main repository will be able to validate the project. 
+  requirement: There shall be a command line interface to help setup the project and
+    start the GUI.
+  description: This will allow the user to push to a main repository and the main
+    repository will be able to validate the project.
   label:
   - cli
   parent_idx:
-  - new4
+  - r00000006
 
-new4:
+r00000006:
   enabled: true
   type: service
   title: Easy Setup
-  requirement: The task of setting up a project shall be easy. This includes a few simple steps and good documentation.
+  requirement: The task of setting up a project shall be easy. This includes a few
+    simple steps and good documentation.
   description: This will allow the user to use the project quickly and easily.
   label:
   - setup
 
-new5:
+r00000007:
   enabled: true
   type: service
   title: New Project Template
   requirement: A starting template shall be easily available for new projects.
   description: This will allow the user to start from a good place.
   parent_idx:
-  - new4
+  - r00000006
   related_idx:
-  - new3
+  - r00000005
