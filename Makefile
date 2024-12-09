@@ -7,6 +7,7 @@ ACTIVATE := $(VENV)/Scripts/activate
 DIST := dist
 EGGINFO := $(NAME).egg-info
 SPHINX := docs
+MAIN := main.py
 
 .PHONY: env
 env: $(ACTIVATE) install
@@ -34,6 +35,13 @@ install: $(ACTIVATE)
 	$(PYTHON) -m pip install --upgrade pip
 	$(PIP) install --upgrade build
 	$(PIP) install -r requirements.txt
+
+.PHONY: cli
+cli: $(ACTIVATE)
+	@echo *******
+	@echo run CLI
+	@echo *******
+	$(PYTHON) $(MAIN)
 
 .PHONY: format
 format: $(ACTIVATE)
@@ -98,6 +106,7 @@ help:
 	@echo   env        - Create a virtual environment and install dependencies.
 	@echo   all        - Create environment, install dependencies, and build package.
 	@echo   install    - Install dependencies from requirements.txt.
+	@echo   cli	       - Run the littleR command line interface.
 	@echo   format	   - Format the code using Black.
 	@echo   test       - Run tests.
 	@echo   lint	   - Run the fast ruff linter.

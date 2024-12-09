@@ -1,0 +1,7 @@
+new7:
+  enabled: true
+  type: software
+  title: CLI Options
+  requirement: The setup cli shall present the user with descriptive options to help setup the project.
+  parent_idx:
+  - new3

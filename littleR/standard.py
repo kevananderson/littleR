@@ -93,6 +93,9 @@ class Standard:  # pylint: disable=too-many-instance-attributes
             directory (str): The directory to read the requirements from.
                 If None, the current working directory is used.
 
+        Returns:
+            Standard: The modified Standard object.
+
         Raises:
             ValueError: If the directory is not a valid directory.
         """
@@ -122,8 +125,16 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         # link the requirements together
         self._link_requirements()
 
+        return self
+
     def write(self):
-        """Write the requirements back to file after editing."""
+        """Write the requirements back to file after editing.
+        
+        This method writes the requirements back to the files after editing.
+
+        Returns:
+            Standard: The modified Standard object.
+        """
         # link the requirements to their folios
         for req in self._requirements.values():
             req_folio = self._folios[req.path()]
@@ -132,6 +143,11 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         # write the requirements to the directory
         for folio in self._folios.values():
             folio.write_file()
+
+        #write the validator report
+        self._validator.write_report()
+
+        return self
 
     def file_count(self):
         """Return the number of requirement files found.

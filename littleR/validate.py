@@ -179,6 +179,29 @@ class Validator:
             report += f.report()
         return report.strip()
 
+    def write_report(self): #TODO: test this method
+        """Write the validation report to a file.
+
+        Raises:
+            TypeError: If the path is not a string.
+            ValueError: If the report file could not be written.
+        """
+        # verify the input
+        if not isinstance(self._path, str):
+            raise TypeError("The path must be a string.")
+        
+        # create the report
+        report = self.report()
+
+        # write the report to a file
+        report_file = os.path.join(self._path, "validation_report.txt")
+        try:
+            os.makedirs(self._path, exist_ok=True)
+            with open(report_file, "w", encoding="utf-8") as f:
+                f.write(report)
+        except Exception as e:
+            raise ValueError("The report file could not be written.") from e
+
     def path(self):
         """Get the path to the directory where the validation report will be saved.
 
@@ -187,7 +210,17 @@ class Validator:
         """
         return self._path
 
+    def report_path(self): #TODO: test this method
+        """Get the path to the validation report.
 
+        Returns:
+            str: The path to the validation report.
+        """
+        return os.path.join(self.path(), "validation_report.txt")
+    
+    def __str__(self):
+        return "Validator"
+    
 class FileNote:
     """The FileNote class stores notes about a file (Folio).
 

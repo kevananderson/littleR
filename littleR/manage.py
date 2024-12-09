@@ -3,6 +3,7 @@
 import os
 import shutil
 
+from littleR.standard import Standard
 
 def cli():
     """Command line interface for the littleR project.
@@ -12,6 +13,7 @@ def cli():
         * Create a new project.
         * Show the requirements for the littleR project, as an example.
         * Remove the project files. [Warning: This will delete the project files.]
+        * Validate the project requirements.
     """
     # setup functions that the user can call, see below for *Actions* defined locally
     selections = [
@@ -19,9 +21,10 @@ def cli():
         {"fn": _new_project, "text": "Create New Project"},
         {
             "fn": _littleR_project,
-            "text": "Use the requirements for the littleR Project",
+            "text": "Start a new project with the requirements for the littleR Project",
         },
         {"fn": _remove_project, "text": "Remove projects files"},
+        {"fn": _validate_project, "text": "Validate project requirements"},
     ]
 
     while True:
@@ -126,6 +129,16 @@ def _remove_project():
             print("Project files have been deleted.")
         else:
             print("Files NOT removed.")
+
+
+def _validate_project():
+    standard = Standard().read()
+    standard.write()
+    print("Project requirements validated.")
+    print(f"Problems found: {standard.validator().problem_count()}")
+    if standard.validator().problem_count() > 0:
+        print("Please review the problems and correct as needed.")
+        print(f"The report is located: {standard.validator().report_path().replace("\\", "/")}")
 
 
 if __name__ == "__main__":
