@@ -109,6 +109,14 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
         """
         return Requirement.is_new_index(self.index)
 
+    def is_customer(self):
+        """Checks if the requirement is a customer requirement.
+
+        Returns:
+            bool: True if the requirement is a customer requirement, False otherwise
+        """
+        return self.type == "customer"
+    
     def to_yaml(self):
         """Converts the requirement to a .yaml string.
 
@@ -175,11 +183,11 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
 
         # index
         if "index" in req_data:
-            req.index = req_data["index"]
+            req.index = req_data["index"].lower()
 
         # type
         if "type" in req_data:
-            req.type = req_data["type"]
+            req.type = req_data["type"].lower()
 
         # title
         if "title" in req_data:
@@ -199,11 +207,12 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
 
         # component
         if "component" in req_data:
-            req.component = req_data["component"]
+            req.component = req_data["component"].lower()
 
         # label
         if "label" in req_data:
             for label in req_data["label"]:
+                label = label.lower()
                 if label not in req.label:
                     req.label.append(label)
 

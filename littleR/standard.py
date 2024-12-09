@@ -125,6 +125,9 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         # link the requirements together
         self._link_requirements()
 
+        # build the tree of requirements
+        self._build_tree()
+
         return self
 
     def write(self):
@@ -241,6 +244,52 @@ class Standard:  # pylint: disable=too-many-instance-attributes
             raise ValueError("The index must be a valid requirement index")
 
         return self._requirements.get(index)
+
+    def tree(self, customer=False):
+        """Return the tree of requirements.
+
+        The tree is a list of requirements that have no parents.
+
+        Returns:
+            list: The tree of requirements.
+        """
+        return self._tree
+    
+    def depth_tree(self,depth=None):
+        # verify the input
+        if depth is None:
+            depth = 1000 # someone could make a tree of depth 1000, that would be crazy.
+        if not isinstance(depth, int):
+            raise TypeError("The depth must be an integer.")
+        if depth <= 0:
+            raise ValueError("The depth must be a positive integer.")
+        if depth > 1000:
+            raise ValueError("The depth must be less than 1000.")
+        
+        # recursively build the tree
+        tree = []
+        d = 1
+        for req in self.tree():
+            tree.append( (d,req) )
+            if d < depth:
+                tree.extend( Standard._deep_tree(req,d+1,depth) )
+        return tree
+
+    @staticmethod        
+    def _deep_tree(req,d,depth):
+        # input verified elsewhere
+        if d > depth:
+            return []
+
+        # build the tree recursively        
+        tree = []
+        for req in req.child:
+            tree.append( (d,req) )
+            if d < depth:
+                tree.extend( Standard._deep_tree(req,d+1,depth) )
+        return tree
+        
+
 
     # read methods
 
@@ -424,6 +473,23 @@ class Standard:  # pylint: disable=too-many-instance-attributes
                 if related_req not in req.related:
                     req.related.append(related_req)
 
+    def _build_tree(self):
+        """Build the tree of requirements. 
+        
+        The tree does not include customer requirements.
+        """
+        for req in self._requirements.values():
+            if req.is_customer():
+                continue
+            parents = 0
+            for parent in req.parent:
+                if not parent.is_customer():
+                    parents += 1
+                    break
+            if parents == 0:
+                self._tree.append(req)
+                
+            
     # dunders
 
     def __str__(self):
