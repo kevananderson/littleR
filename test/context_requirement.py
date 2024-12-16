@@ -6,13 +6,13 @@ def requirement_data():
     data = {
         "new_requirement": {
             "index": "new1",
-            "type": "Customer",
+            "type": "customer",
             "title": "This is a title",
             "requirement": "The requirement shall be this.",
         },
         "requirement": {
             "index": "r00000045",
-            "type": "Software",
+            "type": "software",
             "title": "Software Title",
             "requirement": "The software shall be this.",
             "description": "This is a description.",
@@ -32,17 +32,18 @@ def requirement_yaml():
     yaml = {
         "new_requirement": "new1:\n"
         + "  enabled: true\n"
-        + "  type: Customer\n"
+        + "  type: customer\n"
         + "  title: This is a title\n"
-        + "  requirement: The requirement shall be this.",
+        + "  requirement: The requirement shall be this.\n"
+        + "  child_idx: []",
         "requirement": "r00000045:\n"
         + "  enabled: true\n"
-        + "  type: Software\n"
+        + "  type: software\n"
         + "  title: Software Title\n"
         + "  requirement: The software shall be this.\n"
         + "  description: This is a description.\n"
         + "  assumptions: These are the assumptions.\n"
-        + "  component: Software Component\n"
+        + "  component: software component\n"
         + "  label:\n"
         + "  - label1\n"
         + "  - label2\n"

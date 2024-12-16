@@ -1,0 +1,97 @@
+:root {
+    --menu_height: 50px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+}
+
+div.menu{
+    height: var(--menu_height);
+    width: 100%;
+}
+
+div.container{
+    top: var(--menu_height);
+    height: 100%;
+    display: table;
+    table-layout: fixed;
+}
+
+div.navigation{
+    width: 10%;
+    min-width: 150px;
+    display: table-cell;
+}
+
+div.content{
+    display: table-cell;
+}
+
+div.toc{
+    padding: 20px;
+}
+
+.toc_item{
+    white-space: nowrap;
+    display: table;
+    margin: 4px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.toc_item div{
+    display: table-cell;
+    white-space: nowrap;
+    padding: 0px 4px;
+}
+
+.toc_item .index{
+    display: inline-block;
+}
+
+.toc_item .requirement{
+    width: 100%;
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ord{
+    font-style: italic;
+    color: black;
+}
+
+div.ord_1{
+    padding-left: 4px;  
+}
+
+div.ord_2{
+    padding-left: 14px;  
+}
+
+.title{
+    font-weight: bold;
+    color: black;
+}
+
+.requirement{
+    color: black;
+}
+
+.index{
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    color: black;
+    background-color: lightgray;
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    padding: 2px;
+}
+

@@ -18,8 +18,9 @@ def compare_file_contents(test_files, output_directory):
             "r",
             encoding="utf-8",
         ) as f:
-            output_contents = f.read()
-        assert test_contents == output_contents
+            expected_contents = f.read()
+        compare_text(test_contents,expected_contents)
+        assert test_contents == expected_contents
 
 
 def test_standard(project_1_directory, scratch_path, project_1_output_directory):

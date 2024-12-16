@@ -1,10 +1,18 @@
+{% load static %}
+
 <!doctype html>
 <html lang="en-US">
   <head>
     <meta charset="utf-8"/>
+    <link rel="stylesheet" href="{% static 'viewR/style.css' %}">
+    <link rel="stylesheet" href="{% static 'viewR/color.css' %}">
     <title></title>
   </head>
   <body>
-    {{body}}
+    {{menu}}
+    <div class="container">
+      {{sidebar}}
+      {{content}}
+    </div>
   </body>
 </html>

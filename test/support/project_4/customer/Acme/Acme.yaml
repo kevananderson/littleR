@@ -7,8 +7,6 @@ r00000003:
     reputable program.
   assumptions: Not all client's capture requirements. This
     is a good practice.
-  label:
-  - Acme
   child_idx:
   - r00000001
   - r00000002

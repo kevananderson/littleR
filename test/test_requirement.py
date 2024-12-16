@@ -13,12 +13,13 @@ def test_new_requirement(customer_file, requirement_data, requirement_yaml):
     assert relative_path == "test/support/file/customer.yaml"
     assert req.index == "new1"
     assert req.enabled == True
-    assert req.type == "Customer"
+    assert req.type == "customer"
     assert req.title == "This is a title"
     assert req.requirement == "The requirement shall be this."
     assert req.is_new() == True
     assert req.int_index() == 1
     assert str(req) == "Requirement(new1)"
+    compare_text(req.to_yaml(), yaml)
     assert req.to_yaml() == yaml
 
 
@@ -30,12 +31,12 @@ def test_requirement(software_file, requirement_data, requirement_yaml):
     assert relative_path == "test/support/file/software.yaml"
     assert req.index == "r00000045"
     assert req.enabled == True
-    assert req.type == "Software"
+    assert req.type == "software"
     assert req.title == "Software Title"
     assert req.requirement == "The software shall be this."
     assert req.description == "This is a description."
     assert req.assumptions == "These are the assumptions."
-    assert req.component == "Software Component"
+    assert req.component == "software component"
     assert req.label == ["label1", "label2"]
     assert req.parent_idx == ["r00000001"]
     assert req.child_idx == ["r00000002", "r00000003"]
@@ -43,8 +44,7 @@ def test_requirement(software_file, requirement_data, requirement_yaml):
     assert req.is_new() == False
     assert req.int_index() == 45
     assert str(req) == "Requirement(r00000045)"
-    print(f"<{req.to_yaml()}>")
-    print(f"[{yaml}]")
+    compare_text(req.to_yaml(), yaml)
     assert req.to_yaml() == yaml
 
 

@@ -1,42 +1,49 @@
+"""Views for the viewR app.
+
+All the views have the same structure.
+
+Args:
+    request (HttpResponse): The request object.
+
+Returns:
+    HttpResponse: The response object.
+"""
+
 from django.http import HttpResponse
 from django.template import loader
-#from django.shortcuts import render
-
-#from context import littleR
-#from littleR.standard import Standard
 from .models import Standard_Model as Std
+from littleR.tree import Tree
+from littleR.tree_filter import TreeFilter
+from .standard_view import StdView
 
 
 def index(request):
-    """The index view for the viewR app.
-
-    Args:
-        request (HttpRequest): The request object.
-
-    Returns:
-        HttpResponse: The response object.
-    """
+    """The index view for the viewR app."""
     # get the tree data
-    depth_tree = Std.model().depth_tree()
-    
-    edited_tree = []
-    for d,req in depth_tree:
-        if d <= 0:
-            continue
-        if d > 7:
-            d = 7
-        edited_tree.append((d,req))
+    tree = Tree( Std.model(), TreeFilter({})) # no filter for now
 
-    # tree (table of contents)
-    tree_template = loader.get_template("viewR/toc_tree.html")
-    tree = tree_template.render({"tree": edited_tree}, request)
+    # toc_tree (table of contents tree)
+    toc_list = StdView.toc_tree(request, tree, 4) #depth can also be changed
 
-    # index
-    index_template = loader.get_template("viewR/index.html")
-    index = index_template.render({"tree": tree}, request)
+    # toc
+    toc_template = loader.get_template("viewR/toc.html")
+    toc = toc_template.render({"toc_list": toc_list}, request)
+
+    # menu
+    menu_template = loader.get_template("viewR/menu.html")
+    menu = menu_template.render({"menu": ""}, request)
+
+    # navigation
+    navigation_template = loader.get_template("viewR/navigation.html")
+    navigation = navigation_template.render({"navigation": ""}, request)
 
     # page
+    page_content = {
+        "content": toc,
+        "menu": menu,
+        "sidebar": navigation,
+    }
     page_template = loader.get_template("viewR/page.html")
-    page = page_template.render({"body": index}, request)
+    page = page_template.render(page_content, request)
 
     return HttpResponse(page)

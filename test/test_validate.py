@@ -57,6 +57,11 @@ def test_validator_init(scratch_path):
     relative_path = os.path.relpath(v.path(), os.getcwd()).replace("\\", "/")
     assert relative_path == "test/scratch"
 
+    path = os.path.join(scratch_path, "create")
+    v = Validator(path)
+    relative_path = os.path.relpath(v.path(), os.getcwd()).replace("\\", "/")
+    assert relative_path == "test/scratch/create"
+
     with pytest.raises(TypeError):
         v = Validator(42)
     with pytest.raises(TypeError):
@@ -64,9 +69,7 @@ def test_validator_init(scratch_path):
     with pytest.raises(TypeError):
         v = Validator({"path": scratch_path})
     with pytest.raises(ValueError):
-        v = Validator("p234dsf")
-    with pytest.raises(ValueError):
-        v = Validator("test/scratch/not_here")
+        v = Validator('p23"4dsf')
 
 
 def test_validator_negative_note():

@@ -8,6 +8,7 @@ DIST := dist
 EGGINFO := $(NAME).egg-info
 SPHINX := docs
 MAIN := main.py
+GUI := littleR/interface/manage.py
 
 .PHONY: env
 env: $(ACTIVATE) install
@@ -42,6 +43,13 @@ cli: $(ACTIVATE)
 	@echo run CLI
 	@echo *******
 	$(PYTHON) $(MAIN)
+
+.PHONY: gui
+gui: $(ACTIVATE)
+	@echo *******
+	@echo run GUI
+	@echo *******
+	$(PYTHON) $(GUI) runserver
 
 .PHONY: format
 format: $(ACTIVATE)
@@ -106,10 +114,11 @@ help:
 	@echo   env        - Create a virtual environment and install dependencies.
 	@echo   all        - Create environment, install dependencies, and build package.
 	@echo   install    - Install dependencies from requirements.txt.
-	@echo   cli	       - Run the littleR command line interface.
-	@echo   format	   - Format the code using Black.
+	@echo   cli        - Run the littleR command line interface.
+	@echo   gui        - Run the littleR graphical user interface.
+	@echo   format     - Format the code using Black.
 	@echo   test       - Run tests.
-	@echo   lint	   - Run the fast ruff linter.
+	@echo   lint       - Run the fast ruff linter.
 	@echo   pylint     - Run the slower pylint linter.
 	@echo   html       - Generate HTML documentation. Calls sphinx make.
 	@echo   package    - Build the package.
