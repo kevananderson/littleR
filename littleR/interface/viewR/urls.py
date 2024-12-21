@@ -7,4 +7,5 @@ from . import views
 app_name = "viewR"
 urlpatterns = [
     path("", views.index, name="index"),
+    path("req/<str:req_id>", views.detail, name="detail"),
 ]

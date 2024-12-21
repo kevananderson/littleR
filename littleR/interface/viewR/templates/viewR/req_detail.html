@@ -1,0 +1,11 @@
+{% load formatting %}
+
+<div class="req_detail">
+    <div class="title {{req.type}}">{{req.title}}</div>
+    <div class="type">{{req.type|title_string}}</div>
+    <div class="index">{{req.index}}</div>
+    <div class="requirement">{{req.requirement}}</div>
+    <div class="description">{{req.description}}</div>
+    <div class="assumptions">{{req.assumptions}}</div>
+    <div class="component">{{req.component}}</div>
+</div>
