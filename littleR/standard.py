@@ -202,6 +202,15 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         """
         return list(self._folios.keys())
 
+    def get_folio_relative_paths(self):
+        """Return the relative paths to the folios.
+
+        Returns:
+            list: A list of the relative paths to the folios.
+        """
+        start_path = os.getcwd()
+        return [os.path.relpath(path, start_path) for path in self._folios.keys()]
+
     def name(self):
         """Return the name of the standard.
 

@@ -1,11 +1,28 @@
 {% load formatting %}
 
 <div class="req_detail">
-    <div class="title {{req.type}}">{{req.title}}</div>
-    <div class="type">{{req.type|title_string}}</div>
-    <div class="index">{{req.index}}</div>
-    <div class="requirement">{{req.requirement}}</div>
-    <div class="description">{{req.description}}</div>
-    <div class="assumptions">{{req.assumptions}}</div>
-    <div class="component">{{req.component}}</div>
+    <form id="req_path_form" action="/viewR/ajax_req_path/{{req.index}}" method="post">
+    {{ req_path_form.index }}
+    {{ req_path_form }}
+    </form>
+    <div><div class="index">{{req.index}}</div></div>
+    <form id="req_text_form" action="/viewR/ajax_req_text/{{req.index}}" method="post">
+    {{ req_text_form.index }}
+    {{ req_text_form }}
+    </form>
+    <form id="req_label_form" action="/viewR/ajax_delete_req_label/{{req.index}}" method="post">
+    <div class="label">Labels:</div>
+    <div class="req_label">
+        <ul id="req_label_list">
+        {% for label in req.label %}
+            <li>{{label}} <button class="delete-label">x</button></li>
+        {% endfor %}
+        </ul>
+    </div>   
+    </form>
+    <form id="req_label_form" action="/viewR/ajax_add_req_label/{{req.index}}" method="post">
+    {{ req_label_form.index }}
+    {{ req_label_form }}
+    <input type="submit" value="Add" />
+    </form>
 </div>

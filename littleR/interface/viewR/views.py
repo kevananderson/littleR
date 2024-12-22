@@ -9,13 +9,15 @@ Returns:
     HttpResponse: The response object.
 """
 
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.template import loader
+from django.views.decorators.csrf import csrf_exempt
 from .models import Standard_Model as Std
 from littleR.tree import Tree
 from littleR.tree_filter import TreeFilter
 from .standard_view import StdView
 from littleR.requirement import Requirement
+from .forms.req_forms import ReqText, ReqPath, ReqLabel
 
 
 def index(request):
@@ -49,6 +51,7 @@ def index(request):
 
     return HttpResponse(page)
 
+@csrf_exempt
 def detail(request, req_id):
     """The detail view for the requirement."""
     # verify the input
@@ -56,7 +59,7 @@ def detail(request, req_id):
         return HttpResponseNotFound("The requirement ID must be a string.")
     if not Requirement.valid_index(req_id):
         return HttpResponseNotFound("The requirement ID is not valid.")
-    
+
     # get the tree data
     standard = Std.model()
 
@@ -65,9 +68,30 @@ def detail(request, req_id):
     if req is None:
         return HttpResponseNotFound("The requirement was not found.")
     
+    # get the req content for the forms
+    req_content = req.to_dict()
+    
+    #create the req_path_form
+    rel_paths = standard.get_folio_relative_paths()
+    abs_paths = standard.get_folio_paths()
+    path_choices = [(abs,rel) for abs,rel in zip(abs_paths,rel_paths)]
+    req_path_form = ReqPath(req_content, path_choices=path_choices )
+
+    # create the req_text_form
+    req_text_form = ReqText(req_content)
+
+    #create the label form
+    req_label_form = ReqLabel()
+
     # use the template to display the requirement
     req_template = loader.get_template("viewR/req_detail.html")
-    detail = req_template.render({"req": req}, request)
+    detail_content = {
+        "req": req,
+        "req_path_form": req_path_form,
+        "req_text_form": req_text_form,
+        "req_label_form": req_label_form,
+    }
+    detail = req_template.render(detail_content, request)
 
     # menu
     menu_template = loader.get_template("viewR/menu.html")

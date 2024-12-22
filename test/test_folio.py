@@ -25,7 +25,7 @@ def test_folio_empty_file(empty_file, scratch_path, reports_text):
     folio = Folio(empty_file, v)
     relative_path = os.path.relpath(folio.path(), os.getcwd()).replace("\\", "/")
     assert relative_path == "test/support/file/empty.yaml"
-    assert folio.valid() == False
+    assert folio.valid() == True
     folio_string = str(folio).replace("\\", "/")
     assert "Folio(" in folio_string
     assert "test/support/file/empty.yaml)" in folio_string

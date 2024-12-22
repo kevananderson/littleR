@@ -151,6 +151,135 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
         text = yaml.dump_to_string(data)  # pylint: disable=no-member
         return text
 
+    def to_dict(self):
+        """Converts the requirement to a dictionary.
+
+        Returns:
+            dict: the requirement converted to a dictionary
+        """
+        content = {}
+
+        content["path"] = self._path
+        content["enabled"] = self.enabled
+        content["index"] = self.index
+        content["type"] = self.type
+        content["title"] = self.title
+        content["requirement"] = self.requirement
+        content["description"] = self.description
+        content["assumptions"] = self.assumptions
+        content["component"] = self.component
+        content["label"] = self.label
+        content["parent_idx"] = self.parent_idx
+        content["child_idx"] = self.child_idx
+        content["related_idx"] = self.related_idx
+
+        return content
+    
+    def update_from_dict(self, req_data):
+        """Updates the requirement from a dictionary.
+
+        Args:
+            req_data (dict): the requirement data to update
+
+        Returns: 
+            bool: True if the requirement needs re-linking, False otherwise
+
+        Raises:
+            ValueError: if the req_data is not a dictionary
+        """
+        # verify the input
+        if not isinstance(req_data, dict):
+            raise ValueError("req_data must be a dictionary")
+
+        # assume we do not need re-linking
+        re_link = False
+
+        # update the requirement
+        if "path" in req_data:
+            path = req_data["path"]
+            if isinstance(path, str) and os.path.isfile(path):
+                self._path = path
+
+        if "enabled" in req_data:
+            enabled = req_data["enabled"]
+            if isinstance(enabled, bool):
+                self.enabled = req_data["enabled"]
+
+        if "type" in req_data:
+            type = req_data["type"]
+            if isinstance(type, str):
+                type_lower = type.lower()
+                self.type = type_lower
+
+        if "title" in req_data:
+            title = req_data["title"]
+            if isinstance(title, str):
+                self.title = title
+        
+        if "requirement" in req_data:
+            requirement = req_data["requirement"]
+            if isinstance(requirement, str):
+                self.requirement = requirement
+        
+        if "description" in req_data:
+            description = req_data["description"]
+            if isinstance(description, str):
+                self.description = description
+
+        if "assumptions" in req_data:
+            assumptions = req_data["assumptions"]
+            if isinstance(assumptions, str):
+                self.assumptions = assumptions
+
+        if "component" in req_data:
+            component = req_data["component"]
+            if isinstance(component, str):
+                self.component = component.lower()
+
+        if "label" in req_data:
+            labels = req_data["label"]
+            if isinstance(labels, list):
+                self.label = []
+                for label in labels:
+                    label_lower = label.lower()
+                    if label_lower not in self.label:
+                        self.label.append(label_lower)
+
+        if "parent_idx" in req_data:
+            parent_idx = req_data["parent_idx"]
+            if isinstance(parent_idx, list):
+                previous_parent_idx = self.parent_idx
+                self.parent_idx = []
+                for idx in parent_idx:
+                    if Requirement.valid_index(idx) and idx not in self.parent_idx:
+                        self.parent_idx.append(idx)
+                if previous_parent_idx != self.parent_idx:
+                    re_link = True
+
+        if "child_idx" in req_data:
+            child_idx = req_data["child_idx"]
+            if isinstance(child_idx, list):
+                previous_child_idx = self.child_idx
+                self.child_idx = []
+                for idx in child_idx:
+                    if Requirement.valid_index(idx) and idx not in self.child_idx:
+                        self.child_idx.append(idx)
+                if previous_child_idx != self.child_idx:
+                    re_link = True
+
+        if "related_idx" in req_data:
+            related_idx = req_data["related_idx"]
+            if isinstance(related_idx, list):
+                previous_related_idx = self.related_idx
+                self.related_idx = []
+                for idx in related_idx:
+                    if Requirement.valid_index(idx) and idx not in self.related_idx:
+                        self.related_idx.append(idx)
+                if previous_related_idx != self.related_idx:
+                    re_link = True
+        
+        return re_link
+        
     @staticmethod
     def factory(file_path, req_data=None):  # pylint: disable=too-many-branches
         """Creates a new Requirement object.

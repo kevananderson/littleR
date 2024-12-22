@@ -133,7 +133,6 @@ class Folio:
             self._validator.file_note(
                 self.path(), "No data read from file file.", problem=True
             )
-            self._valid = False
             return []
 
         if not isinstance(data, dict) and len(data) > 0:
