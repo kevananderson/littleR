@@ -2,27 +2,31 @@
 
 <div class="req_detail">
     <form id="req_path_form" action="/viewR/ajax_req_path/{{req.index}}" method="post">
-    {{ req_path_form.index }}
-    {{ req_path_form }}
+        {{ req_path_form.index }}
+        {{ req_path_form }}
     </form>
     <div><div class="index">{{req.index}}</div></div>
     <form id="req_text_form" action="/viewR/ajax_req_text/{{req.index}}" method="post">
-    {{ req_text_form.index }}
-    {{ req_text_form }}
+        {{ req_text_form.index }}
+        {{ req_text_form }}
     </form>
-    <form id="req_label_form" action="/viewR/ajax_delete_req_label/{{req.index}}" method="post">
-    <div class="label">Labels:</div>
-    <div class="req_label">
-        <ul id="req_label_list">
-        {% for label in req.label %}
-            <li>{{label}} <button class="delete-label">x</button></li>
-        {% endfor %}
-        </ul>
-    </div>   
+    <form id="delete_req_label_form" action="/viewR/ajax_delete_req_label/{{req.index}}" method="post">
+        <input type="hidden" name="index" value="{{req.index}}" id="id_index">    
+        {{req_label}}
     </form>
-    <form id="req_label_form" action="/viewR/ajax_add_req_label/{{req.index}}" method="post">
-    {{ req_label_form.index }}
-    {{ req_label_form }}
-    <input type="submit" value="Add" />
+    <form id="add_req_label_form" action="/viewR/ajax_add_req_label/{{req.index}}" method="post">
+        {{ req_label_form.index }}
+        {{ req_label_form }}
+        <button type="submit">Add</button>
     </form>
+    <form id="delete_req_relation_form" action="/viewR/ajax_delete_req_relation/{{req.index}}" method="post">
+        <input type="hidden" name="index" value="{{req.index}}" id="id_index">    
+        {{req_relation}}
+    </form>
+    <form id="add_req_relation_form" action="/viewR/ajax_add_req_relation/{{req.index}}" method="post">
+        {{ req_relation_form.index }}
+        {{ req_relation_form }}
+        <button type="submit">Add</button>
+    </form>
+    
 </div>

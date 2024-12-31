@@ -8,11 +8,11 @@ class TreeFilter():
         customer (str): The customer of the requirements. Without this,
             the tree will not include customer requirements. At most one 
             customer can be specified.
-        label (list): The labels of the requirements. Any group of children
+        label (set): The labels of the requirements. Any group of children
             with no labels will be included. If the filter has the matching
             label, the child will be included. If a child has a label but it
             does not include the listed label, it will not be included.
-        not_label (list): The labels that the requirements should not have.
+        not_label (set): The labels that the requirements should not have.
             Any group of children with the not_label listed will be excluded.
     """
 
@@ -29,24 +29,24 @@ class TreeFilter():
         self._customer = customer.lower()
 
         # label
-        self._label = []
-        label = filter_config.get("label", [])
-        if not isinstance(label, list):
-            raise TypeError("The label must be a list.")
+        self._label = set()
+        label = filter_config.get("label", set())
+        if not isinstance(label, set):
+            raise TypeError("The label must be a set.")
         for l in label:
             if not isinstance(l, str):
                 raise TypeError("The label must be a list of strings.")
-            self._label.append(l.lower())
+            self._label.add(l.lower())
         
         # not label
-        self._not_label = []
-        not_label = filter_config.get("not_label", [])
-        if not isinstance(not_label, list):
-            raise TypeError("The not_label must be a list.")
+        self._not_label = set()
+        not_label = filter_config.get("not_label", set())
+        if not isinstance(not_label, set):
+            raise TypeError("The not_label must be a set.")
         for l in not_label:
             if not isinstance(l, str):
                 raise TypeError("The not_label must be a list of strings.")
-            self._not_label.append(l.lower())
+            self._not_label.add(l.lower())
 
         # verify that the label and not_label do not overlap
         for l in self._label:

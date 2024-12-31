@@ -257,6 +257,39 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         """
         return iter(self._requirements.values())
 
+    def relink(self, requirements=None):
+        """Relink the requirements.
+
+        This method relinks the requirements to their parents, children, and related requirements.
+
+        Args:
+            requirements (list<str>): The requirement indices to relink. 
+                Must be at least 2 indices.
+
+        Raises:
+            ValueError: If the requirements to relink are not provided.
+            TypeError: If the requirements are not a list.
+            ValueError: If there are not at least 2 requirements.
+            ValueError: If the index is not a valid requirement index.
+            ValueError: If the requirement is not in the standard
+        """
+        # verify the input
+        if requirements is None:    
+            raise ValueError("Requirements to relink must be provided.")
+        if not isinstance(requirements, list):
+            raise TypeError("Requirements must be a list.")
+        if len(requirements) < 2:
+            raise ValueError("At least 2 requirements must be provided.")
+        for index in requirements:
+            if not Requirement.valid_index(index):
+                raise ValueError("The index must be a valid requirement index.")
+            if index not in self._requirements:
+                raise ValueError("The requirement must be in the standard.")
+        
+        #turn the indices into requirements
+        reqs = [self._requirements[index] for index in requirements]
+        self._link_requirements(reqs)
+    
     # read methods
 
     def _get_config(self, directory):
@@ -368,20 +401,28 @@ class Standard:  # pylint: disable=too-many-instance-attributes
             # add the requirement back to the dictionary
             self._requirements[index] = req
 
-    def _link_requirements(self):  # pylint: disable=too-many-branches
+    def _link_requirements(self, link = None):  # pylint: disable=too-many-branches
         """Link the requirements.
 
         for each requirement's parent_idx, child_idx, and related_idx, we will:
             * link requirements
             * replace "new" indices with the updated index
+
+        Args:
+            link (list<Requirement>): The requirements to relink. Optional.
+                If provided, will only relink the requirements in the list.
         """
-        for req in self._requirements.values():
+        if link is None:
+            link = self._requirements.values()
+
+        for req in link:
 
             # parent_idx
-            for i, p_idx in enumerate(req.parent_idx):
+            parent_idx = sorted(list(req.parent_idx))
+            for i, p_idx in enumerate(parent_idx):
 
                 if p_idx in self._new_requirements:
-                    p_idx = req.parent_idx[i] = self._new_requirements[p_idx]
+                    p_idx = parent_idx[i] = self._new_requirements[p_idx]
 
                 if p_idx not in self._requirements:
                     self._validator.index_note(
@@ -390,7 +431,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
                         problem=True,
                     )
                     # remove the invalid parent index
-                    req.parent_idx.remove(p_idx)
+                    parent_idx.remove(p_idx)
                     continue
 
                 parent_req = self._requirements[p_idx]
@@ -401,12 +442,14 @@ class Standard:  # pylint: disable=too-many-instance-attributes
                 if req not in parent_req.child:
                     parent_req.child.append(req)
 
+            req.parent_idx = set(parent_idx)
 
             # child_idx
-            for i, c_idx in enumerate(req.child_idx):
+            child_idx = sorted(list(req.child_idx))
+            for i, c_idx in enumerate(child_idx):
 
                 if c_idx in self._new_requirements:
-                    c_idx = req.child_idx[i] = self._new_requirements[c_idx]
+                    c_idx = child_idx[i] = self._new_requirements[c_idx]
 
                 if c_idx not in self._requirements:
                     self._validator.index_note(
@@ -415,7 +458,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
                         problem=True,
                     )
                     # remove the invalid child index
-                    req.child_idx.remove(c_idx)
+                    child_idx.remove(c_idx)
                     continue
 
                 child_req = self._requirements[c_idx]
@@ -426,10 +469,13 @@ class Standard:  # pylint: disable=too-many-instance-attributes
                 if req not in child_req.parent:
                     child_req.parent.append(req)
 
+            req.child_idx = set(child_idx)
+
             # related_idx
-            for i, r_idx in enumerate(req.related_idx):
+            related_idx = sorted(list(req.related_idx)) 
+            for i, r_idx in enumerate(related_idx):
                 if r_idx in self._new_requirements:
-                    r_idx = req.related_idx[i] = self._new_requirements[r_idx]
+                    r_idx = related_idx[i] = self._new_requirements[r_idx]
 
                 if r_idx not in self._requirements:
                     self._validator.index_note(
@@ -438,7 +484,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
                         problem=True,
                     )
                     # remove the invalid related index
-                    req.related_idx.remove(r_idx)
+                    related_idx.remove(r_idx)
                     continue
 
                 related_req = self._requirements[r_idx]
@@ -448,6 +494,8 @@ class Standard:  # pylint: disable=too-many-instance-attributes
 
                 if req not in related_req.related:
                     related_req.related.append(req)
+
+            req.related_idx = set(related_idx)
             
     # dunders
 

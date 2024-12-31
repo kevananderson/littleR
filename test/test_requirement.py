@@ -37,10 +37,10 @@ def test_requirement(software_file, requirement_data, requirement_yaml):
     assert req.description == "This is a description."
     assert req.assumptions == "These are the assumptions."
     assert req.component == "software component"
-    assert req.label == ["label1", "label2"]
-    assert req.parent_idx == ["r00000001"]
-    assert req.child_idx == ["r00000002", "r00000003"]
-    assert req.related_idx == ["r00000004", "r00000005"]
+    assert req.label == {"label1", "label2"}
+    assert req.parent_idx == {"r00000001"}
+    assert req.child_idx == {"r00000002", "r00000003"}
+    assert req.related_idx == {"r00000004", "r00000005"}
     assert req.is_new() == False
     assert req.int_index() == 45
     assert str(req) == "Requirement(r00000045)"

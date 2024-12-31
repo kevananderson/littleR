@@ -1,0 +1,46 @@
+<div id="req_relation">
+    <div class="relation">
+        <div class="label">Parent:</div>
+        <ul id="req_parent_list">
+        {% for parent in req.parent %}
+            <li>
+                <div><div class="index">{{parent.index}}</div></div>
+                <div class="title {{req.type}}">{{parent.title}}</div>
+                <div class="requirement">{{parent.requirement}}</div>
+                {% if parent.type != 'customer' %}
+                    <button type="button" class="delete-relation" data-index="{{parent.index}}">x</button>
+                {% endif %}
+                
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+    <div class="relation">
+        <div class="label">Children:</div>
+        <ul id="req_child_list">
+        {% for child in req.child %}
+            <li>
+                <div><div class="index">{{child.index}}</div></div>
+                <div class="title {{req.type}}">{{child.title}}</div>
+                <div class="requirement">{{child.requirement}}</div>
+                {% if child.type == 'customer' %}
+                    <button type="button" class="delete-relation" data-index="{{child.index}}">x</button>
+                {% endif %}            
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+    <div class="relation">
+        <div class="label">Related To:</div>
+        <ul id="req_parent_list">
+        {% for related in req.related %}
+            <li>
+                <div><div class="index">{{related.index}}</div></div>
+                <div class="title {{req.type}}">{{related.title}}</div>
+                <div class="requirement">{{related.requirement}}</div>
+                <button type="button" class="delete-relation" data-index="{{related.index}}">x</button>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>   
