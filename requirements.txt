@@ -8,3 +8,4 @@ Django
 ruff
 pylint
 black
+xhtml2pdf

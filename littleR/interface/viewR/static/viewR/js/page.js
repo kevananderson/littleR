@@ -10,6 +10,37 @@ function copy_to_clipboard(text) {
     );
 }
 
+function menu_feedback(text){
+    //generate a random id for the feedback div
+    var id = Math.random().toString(36).substring(7);
+
+    //add a div with the feedback text to the menu
+    var fb_element = '<div class="menu_feedback" id="'+id+'>'+text+'</div>';
+    $('#menu_section').append(fb_element);
+
+    //fade out the feedback div after 5 seconds
+    setTimeout(function(){
+        $('#'+id).fadeOut();
+    }, 5000);
+}
+
+function write_pfd(){
+    //get the action of the button clicked
+    var action = $(this).attr('data-action');
+    //make ajax call to the action url
+    $.ajax({
+        type: 'POST',
+        url: action,
+        data: {},
+        success: function(data) {
+            menu_feedback(data['message']);
+        },
+        error: function() {
+            menu_feedback("Error");
+        }
+    });
+}
+
 function submit_form_on_path_change() {
     form = $('#req_path_form');
     $.ajax({
@@ -34,6 +65,19 @@ function submit_form_on_path_change() {
                 new_element = '<div class="error_message">'+data['message']+'</div>';
                 $('#req_path_form').append(new_element);
             }
+        }
+    });                
+}
+
+function add_new_req() {
+    form = $('#req_path_form');
+    $.ajax({
+        type: 'post',
+        url: "/viewR/ajax_add_req",
+        data: form.serialize(),
+        success: function(data) {
+            //change to the new page
+            window.location.href = data['new_req_url'];
         }
     });                
 }
@@ -177,6 +221,7 @@ function add_relation() {
     });
 }
 
+
 $(document).ready(function() {
 
     //set it up that any click on an index div will copy the text to the clipboard
@@ -185,11 +230,18 @@ $(document).ready(function() {
         copy_to_clipboard(text);
     });    
 
+    //set up the click event for the write_pfd buttons
+    $("button.menu-button").click(write_pfd);
+
     //setup form submission for req_path_form when the path changes
     $('#id_path').change(function() {
         submit_form_on_path_change();
     });
 
+    $("#add_new_req").click(function() {
+        add_new_req();
+    });    
+    
     //set up the automatic saving for req_text_form
     if ( $('#req_text_form').length > 0 ) {
         save_form_input('#req_text_form');

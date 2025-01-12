@@ -8,17 +8,20 @@ Args:
 Returns:
     HttpResponse: The response object.
 """
-
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import HttpResponse, HttpResponseNotFound, HttpRequest
 from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
+
 from .models import Standard_Model as Std
 from littleR.tree import Tree
 from littleR.tree_filter import TreeFilter
 from .standard_view import StdView
+from . import media
 from littleR.requirement import Requirement
 from .forms.req_forms import ReqText, ReqPath, ReqLabel, ReqRelationParent, ReqRelationChild
 
+
+# views
 
 def index(request):
     """The index view for the viewR app."""
@@ -33,8 +36,7 @@ def index(request):
     toc = toc_template.render({"toc_list": toc_list}, request)
 
     # menu
-    menu_template = loader.get_template("viewR/menu.html")
-    menu = menu_template.render({"menu": ""}, request)
+    menu = menu_rendered(request)
 
     # navigation
     navigation_template = loader.get_template("viewR/navigation.html")
@@ -111,8 +113,7 @@ def detail(request, req_id):
     detail = req_template.render(detail_content, request)
 
     # menu
-    menu_template = loader.get_template("viewR/menu.html")
-    menu = menu_template.render({"menu": ""}, request)
+    menu = menu_rendered(request)
 
     # navigation
     navigation_template = loader.get_template("viewR/navigation.html")
@@ -128,3 +129,19 @@ def detail(request, req_id):
     page = page_template.render(page_content, request)
 
     return HttpResponse(page)
+
+# helper functions
+
+def menu_rendered(request):
+    #verify the input
+    if not isinstance(request, HttpRequest):
+        raise TypeError("request must be an HttpRequest.")
+
+    #make sure the media is up to data
+    media.logo()
+
+    #render the template
+    menu_template = loader.get_template("viewR/menu.html")
+    menu_content = {}
+    menu = menu_template.render(menu_content, request)
+    return menu

@@ -14,6 +14,10 @@ class Tree():
         self._standard = standard
         self._tree_filter = tree_filter
     
+    def config(self):
+        """Return the configuration."""
+        return self._standard.config
+
     def top(self):
         """Return the top of the tree."""
         # find the top of the tree

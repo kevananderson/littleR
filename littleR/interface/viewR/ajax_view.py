@@ -9,12 +9,12 @@ Returns:
     JsonResponse: The response object.
 """
 
-from django.http import HttpResponseNotFound, JsonResponse
+from django.http import JsonResponse
 from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
 from .models import Standard_Model as Std
 from littleR.requirement import Requirement
-from .forms.req_forms import ReqText, ReqPath, ReqLabel
+from .forms.req_forms import ReqText, ReqPath
 
 def check_input(request, req_id):
     """Check the input for the requirement ID."""
@@ -63,9 +63,8 @@ def req_path(request, req_id):
     #build the form
     form = ReqPath(request.POST, path_choices=path_choices)
     if form.is_valid():
-        re_link = req.update_from_dict(form.cleaned_data)
-        if re_link:
-            pass #we need to relink this requirement not sure how yet
+        req.update_from_dict(form.cleaned_data)
+        standard.write()
         return JsonResponse({'success': True})
     
     return JsonResponse({'success': False, 'message': "The form is not valid."})
@@ -73,7 +72,7 @@ def req_path(request, req_id):
 @csrf_exempt
 def req_text(request, req_id):
     """The ajax handler for the requirement text."""
-    (valid, message, _, req) = check_input(request, req_id)
+    (valid, message, standard, req) = check_input(request, req_id)
 
     if not valid:
         return JsonResponse({'success': False, 'message': message})
@@ -82,6 +81,7 @@ def req_text(request, req_id):
     form = ReqText(request.POST)
     if form.is_valid():
         req.update_from_dict(form.cleaned_data)
+        standard.write()
         return JsonResponse({'success': True})
     
     return JsonResponse({'success': False})
@@ -89,7 +89,7 @@ def req_text(request, req_id):
 @csrf_exempt
 def delete_req_label(request, req_id):
     """The ajax handler to delete labels from the requirement."""
-    (valid, message, _, req) = check_input(request, req_id)
+    (valid, message, standard, req) = check_input(request, req_id)
 
     if not valid:
         return JsonResponse({'success': False, 'message': message})
@@ -100,6 +100,7 @@ def delete_req_label(request, req_id):
     
     label = request.POST["label"]
     req.delete_label(label)
+    standard.write()
 
     #create the template for the labels, this displays the labels for deletion
     label_template = loader.get_template("viewR/req_label.html")
@@ -110,7 +111,7 @@ def delete_req_label(request, req_id):
 @csrf_exempt
 def add_req_label(request, req_id):
     """The ajax handler to add labels for the requirement."""
-    (valid, message, _, req) = check_input(request, req_id)
+    (valid, message, standard, req) = check_input(request, req_id)
 
     if not valid:
         return JsonResponse({'success': False, 'message': message})
@@ -121,6 +122,7 @@ def add_req_label(request, req_id):
     
     label = request.POST["new_label"]
     req.add_label(label)
+    standard.write()
 
     #create the template for the labels
     label_template = loader.get_template("viewR/req_label.html")
@@ -144,6 +146,7 @@ def delete_req_relation(request, req_id):
     relink = req.delete_relationship(delete)
     if len(relink) >= 2:
         standard.relink(relink)
+    standard.write()
 
     #create the template for the relations, this displays the relations for deletion
     relation_template = loader.get_template("viewR/req_relation.html")
@@ -188,10 +191,35 @@ def add_req_relation(request, req_id):
     #relink the requirements in the standard
     if len(relink) >= 2:
         standard.relink(relink)
+    standard.write()
 
     #create the template for the relations
     relation_template = loader.get_template("viewR/req_relation.html")
     req_relation = relation_template.render({"req": req}, request)
 
     return JsonResponse({'success': True, 'req_relation': req_relation})
+
+@csrf_exempt
+def add_req(request):
+    """The ajax handler to add a new requirement."""
+    # get the tree data
+    standard = Std.model()
+
+    # we get here via post
+    if request.method != "POST":
+        return JsonResponse({'success': False, 'message': "The request must be a POST."})
+    
+    if "path" not in request.POST or "type" not in request.POST:
+        return JsonResponse({'success': False, 'message': "The path or type is missing from the form."})
+        
+    path = request.POST["path"]
+    type = request.POST["type"]
+
+    #relink the requirements in the standard
+    req = standard.get_new_requirement(path, type)
+    standard.write()
+
+    url = '/viewR/req/' + req.index
+
+    return JsonResponse({'success': True, 'new_req_url': url})
 

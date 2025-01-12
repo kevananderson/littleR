@@ -10,9 +10,9 @@ class ReqText(forms.Form):
             ("hardware", "Hardware"),
             ("software", "Software")
             ]
-
+  
     index = forms.CharField(widget=forms.HiddenInput())
-    title = forms.CharField(label="Title", max_length=300)
+    title = forms.CharField(label="Title", max_length=300, required=False)
     type = forms.ChoiceField(label="Type", choices=choices, widget=forms.Select)
     requirement = forms.CharField(label="Requirement", widget=forms.Textarea, required=False)
     description = forms.CharField(label="Description", widget=forms.Textarea, required=False)
@@ -23,6 +23,7 @@ class ReqPath(forms.Form):
     """Form for editing the path of a requirement."""
     
     index = forms.CharField(widget=forms.HiddenInput())
+    type = forms.CharField(widget=forms.HiddenInput())
     path = forms.ChoiceField(label="Path", widget=forms.Select)
 
     def __init__(self, *args, **kwargs):

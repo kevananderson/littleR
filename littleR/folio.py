@@ -118,7 +118,7 @@ class Folio:
         # read the file and parse it to verify the contents
         data = None
         try:
-            # we want to read from the actual path of the file
+            # we want to read from the actual path of the file, self._path
             with open(self._path, "r", encoding="utf-8") as file:
                 data = yaml.load(file)
         except Exception:
@@ -163,7 +163,7 @@ class Folio:
                 req_file_name = os.path.basename(req.path())
                 req_path = os.path.join(self._test_directory, req_file_name)
                 req.set_path(req_path)
-
+            
             # we cannot get a duplicate index - we will not check for one.
 
             # now we add the requirement to the list of requirements
@@ -241,6 +241,13 @@ class Folio:
             text += req_text + "\n\n"
         text = text.strip()
 
+        #clear out the requirements after creating the text
+        self._requirements = []
+
+        # no need to write if nothing changed
+        if text == self._raw_contents:
+            return
+        
         # write the file
         try:
             # we write with the "path" so that the test directory is used

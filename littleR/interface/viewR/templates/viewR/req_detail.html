@@ -2,12 +2,11 @@
 
 <div class="req_detail">
     <form id="req_path_form" action="/viewR/ajax_req_path/{{req.index}}" method="post">
-        {{ req_path_form.index }}
         {{ req_path_form }}
+        <div>Add New Requirement<button type="button" id="add_new_req">+</button></div>
     </form>
     <div><div class="index">{{req.index}}</div></div>
     <form id="req_text_form" action="/viewR/ajax_req_text/{{req.index}}" method="post">
-        {{ req_text_form.index }}
         {{ req_text_form }}
     </form>
     <form id="delete_req_label_form" action="/viewR/ajax_delete_req_label/{{req.index}}" method="post">
@@ -15,7 +14,6 @@
         {{req_label}}
     </form>
     <form id="add_req_label_form" action="/viewR/ajax_add_req_label/{{req.index}}" method="post">
-        {{ req_label_form.index }}
         {{ req_label_form }}
         <button type="submit">Add</button>
     </form>
@@ -24,7 +22,6 @@
         {{req_relation}}
     </form>
     <form id="add_req_relation_form" action="/viewR/ajax_add_req_relation/{{req.index}}" method="post">
-        {{ req_relation_form.index }}
         {{ req_relation_form }}
         <button type="submit">Add</button>
     </form>

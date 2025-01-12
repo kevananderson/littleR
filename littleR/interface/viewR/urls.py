@@ -4,6 +4,7 @@ from django.urls import path
 
 from . import views
 from . import ajax_view
+from . import pdf_view
 
 app_name = "viewR"
 urlpatterns = [
@@ -15,4 +16,6 @@ urlpatterns = [
     path("ajax_add_req_label/<str:req_id>", ajax_view.add_req_label, name="ajax_add_req_label"),
     path("ajax_delete_req_relation/<str:req_id>", ajax_view.delete_req_relation, name="ajax_delete_req_relation"),
     path("ajax_add_req_relation/<str:req_id>", ajax_view.add_req_relation, name="ajax_add_req_relation"),
+    path("ajax_add_req", ajax_view.add_req, name="ajax_add_req"),
+    path("pdf/<str:action>", pdf_view.pdf_write, name="pdf_write"),
 ]

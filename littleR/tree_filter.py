@@ -52,7 +52,12 @@ class TreeFilter():
         for l in self._label:
             if l in self._not_label:
                 raise ValueError("The label and not_label must not overlap.")
-            
+        
+        # component
+        self._component = filter_config.get("component", "")
+        if not isinstance(self._component, str):
+            raise TypeError("The component must be a string.")
+        
     def top(self, req):
         """Return True if the requirement is a top level req.
 

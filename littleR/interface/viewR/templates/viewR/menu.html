@@ -1,1 +1,7 @@
-<div class="menu"></div>
+{% load static %}
+
+<div class="menu" id="menu_section">
+    <img src="{% static 'viewR/img/project_logo.png' %}" id="littleR-logo" alt="littleR Logo">
+    <button class"menu-button" id="summary_pdf" data-action="viewR/pdf/summary">Summary PDF</button>
+    <button class"menu-button" id="detail_pdf" data-action="viewR/pdf/detail">Detail PDF</button>
+</div>

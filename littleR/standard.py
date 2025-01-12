@@ -66,7 +66,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         self._folios = {}
 
         # the config for the standard
-        self._config = None
+        self.config = None
 
         # test directory
         self._test_directory = test_directory
@@ -194,6 +194,40 @@ class Standard:  # pylint: disable=too-many-instance-attributes
             idx = requirement.int_index()
             self._max_index = max(self._max_index, idx)
 
+    def get_new_requirement(self, path, type):
+        """Return a new requirement.
+
+        This method creates a new requirement with the given path.
+
+        Returns:
+            Requirement: A new requirement object.
+        """
+        # verify the input
+        if not isinstance(path, str):
+            raise TypeError("The path must be a string")
+        if not os.path.isfile(path):
+            raise ValueError("The path must be a valid file")
+        if path not in self._folios:
+            raise ValueError("The path must reference a Folio path")
+        if not isinstance(type, str):
+            raise TypeError("The type must be a string")
+        
+        
+        # create the new requirement
+        req = Requirement()
+        req.set_path(path)
+
+        self._max_index += 1
+        req.index = f"r{self._max_index:08d}"
+        
+        req.enabled = True
+
+        req.type = type
+
+        # add the requirement to the standard and return
+        self.add_requirement(req)
+        return req
+
     def get_folio_paths(self):
         """Return the paths to the folios.
 
@@ -260,7 +294,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
     def relink(self, requirements=None):
         """Relink the requirements.
 
-        This method relinks the requirements to their parents, children, and related requirements.
+        This method re-links the requirements to their parents, children, and related requirements.
 
         Args:
             requirements (list<str>): The requirement indices to relink. 
@@ -308,7 +342,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
             )
             return
 
-        self._config = Configuration(self._validator).read(config_path)
+        self.config = Configuration(self._validator).read(config_path)
 
     def _get_paths(self, directory):
         # verify the input
