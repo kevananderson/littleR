@@ -1,7 +1,22 @@
 {% load static %}
 
 <div class="menu" id="menu_section">
-    <img src="{% static 'viewR/img/project_logo.png' %}" id="littleR-logo" alt="littleR Logo">
-    <button class"menu-button" id="summary_pdf" data-action="viewR/pdf/summary">Summary PDF</button>
-    <button class"menu-button" id="detail_pdf" data-action="viewR/pdf/detail">Detail PDF</button>
+    <img src="{% static 'viewR/img/project_logo.png' %}" id="project_logo" alt="Project Logo">
+    <ul>
+        <li><a class="menu_item" id="toc_link" href="/viewR">Contents</a></li>
+        <li><a class="menu_item" id="summary_link" href="/viewR/summary">Summary</a></li>
+        <li>
+            <div class="dropdown">
+                <div class="menu_item">PDF</div>
+                <div class="drop_content">
+                    <p class="drop_section">Summary</p>
+                    <a class="drop_item" id="pdf_summary_link" href="/viewR/preview/summary">Preview</a>
+                    <button class="drop_item menu-button" id="summary_pdf" data-action="/viewR/pdf/summary">Write</button>
+                    <p class="drop_section">Detail</p>
+                    <a class="drop_item" id="pdf_detail_link" href="/viewR/preview/detail">Preview</a>
+                    <button class="drop_item menu-button" id="detail_pdf" data-action="/viewR/pdf/detail">Write</button>
+                </div>
+            </div>
+        </li>
+    </ul>
 </div>

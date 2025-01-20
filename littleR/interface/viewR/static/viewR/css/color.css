@@ -1,7 +1,19 @@
 div.menu{
-    background-color: salmon;
+    background-color: lightgray;
+}
+a.menu_link{
+    background-color: lightgray; 
+}
+#project_logo{
+    border-right: 1px solid gainsboro;
+}
+div.menu li{
+    border-right: 1px solid gainsboro;
+}
+div.drop_content{
+    background-color: lightgray;
+}
+div.navigation{
+    background-color: gainsboro;
 }
 
-div.navigation{
-    background-color: lightcoral;
-}

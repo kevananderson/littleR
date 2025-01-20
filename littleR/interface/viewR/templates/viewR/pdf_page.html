@@ -5,18 +5,19 @@
   <head>
     <meta charset="utf-8"/>
     <link rel="shortcut icon" type="image/png" href="{% static 'viewR/img/favicon.png' %}" >
-    <link rel="stylesheet" href="{% static 'viewR/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'viewR/css/pdf.css' %}">
     <link rel="stylesheet" href="{% static 'viewR/css/menu.css' %}">
     <link rel="stylesheet" href="{% static 'viewR/css/color.css' %}">
     <script type="text/javascript" src="{% static 'viewR/js/jquery-3.7.1.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'viewR/js/page.js' %}"></script>
-    <title>view R</title>
+    <title>view R - PDF Preview</title>
   </head>
   <body>
     {{menu}}
     <div class="container">
-      {{sidebar}}
-      {{content}}
+        {{title}}
+        {{toc}}
+        {{content}}
     </div>
   </body>
 </html>

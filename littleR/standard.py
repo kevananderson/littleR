@@ -80,6 +80,7 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         # project and customer paths
         self._project_path = ""
         self._customer_path = ""
+        self._reports_path = ""
 
     def read(self, directory=None):
         """Read the requirements from the directory.
@@ -245,6 +246,14 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         start_path = os.getcwd()
         return [os.path.relpath(path, start_path) for path in self._folios.keys()]
 
+    def get_report_path(self):
+        """Return the path to the reports folder.
+
+        Returns:
+            str: The path to the reports folder.
+        """
+        return self._reports_path
+
     def name(self):
         """Return the name of the standard.
 
@@ -364,6 +373,10 @@ class Standard:  # pylint: disable=too-many-instance-attributes
         if not os.path.isdir(self._customer_path):
             self._validator.note("Customer path not found at project root.")
             self._customer_path = ""
+
+        # reports folder
+        self._reports_path = os.path.join(directory, "reports")
+        #this path does not have to exist, it will be created if not found
 
     def _get_folios(self):
         # verify required input

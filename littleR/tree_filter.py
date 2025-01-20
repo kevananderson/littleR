@@ -161,10 +161,19 @@ class TreeFilter():
             self._customer, self._label, self._not_label)
     
     def __repr__(self):
-        c = 0
+        # do we have a customer
+        cu = 0
         if self._customer != "":
-            c = 1
-        l = len(self._label)
-        nl = len(self._not_label)
-        return f"TreeFilter: c[{c}], l[{l}], nl[{nl}]"
+            cu = 1
+        
+        # do we have a label or not?
+        label = len(self._label)
+        not_label = len(self._not_label)
+
+        #do we have a component
+        co = 0
+        if self._component != "":
+            co = 1
+
+        return f"TreeFilter: cu[{cu}], l[{label}], nl[{not_label}], co[{not_label}]"
     

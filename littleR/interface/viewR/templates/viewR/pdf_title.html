@@ -1,0 +1,29 @@
+{% load static %}
+
+<div class="title">
+    {% if static_root and image_name %}
+    <img src="{{ static_root }}/img/{{ image_name }}" class="logo" id="logo" alt="Logo">
+    {% else %}
+    <img src="{% static 'viewR/img/project_logo.png' %}" class="logo" id="logo" alt="Logo">
+    {% endif %}
+    <h1>{{ title }}</h1>
+    {% if desc %}
+    <h2>{{ desc }}</h2>
+    {% endif %}
+    {% if version %}
+    <h3>{{ version }}</h3>
+    {% endif %}
+    <h3>{{ date }}</h3>
+    {% if line_1 %}
+    <h3>{{ line_1 }}</h3>
+    {% endif %}
+    {% if line_2 %}
+    <h3>{{ line_2 }}</h3>
+    {% endif %}
+    {% if line_3 %}
+    <h4>{{ line_3 }}</h4>
+    {% endif %}
+    {% if line_4 %}
+    <h4>{{ line_4 }}</h4>
+    {% endif %}
+</div>

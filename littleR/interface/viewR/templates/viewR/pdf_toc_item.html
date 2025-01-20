@@ -1,0 +1,12 @@
+{% load formatting %}
+
+<div class="pdf_toc_item">
+    <div class="ord ord_{{ depth }}">{{ idx }}</div>
+    <div class="title" id="toc_{{ req.index }}">{{ req.title }}</div>
+    <div class="requirement">{{ req.requirement }}</div>
+    <div class="type {{ req.type }}">{{ req.type|title_string }}</div>
+    <a class="index_link" href="#{{ req.index }}">
+        <div class="index">{{req.index}}</div>
+    </a>
+</div>
+   

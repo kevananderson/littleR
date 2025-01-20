@@ -1,0 +1,15 @@
+{% load formatting %}
+
+<div class="summary_item">
+    <div class="summary_title">
+        <div class="ord ord_{{ depth }}">{{ idx }}</div>
+        <a href="/viewR/req/{{ req.index }}">
+            <div class="sum_title ">{{req.title}}</div>    
+        </a>
+        <div class="sum_type {{ req.type }}">{{ req.type|title_string }}</div>
+        <div class="sum_index index">{{ req.index }}</div>
+    </div>
+    <div class="sum_requirement">{{ req.requirement }}</div>
+    <div class="sum_description">{{ req.description }}</div>
+</div>
+   

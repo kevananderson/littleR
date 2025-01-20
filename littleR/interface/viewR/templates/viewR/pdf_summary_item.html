@@ -1,0 +1,14 @@
+{% load formatting %}
+
+<div class="pdf_summary_item">
+    <div class="summary_title">
+        <div class="ord ord_{{ depth }}">{{ idx }}</div>
+        <div class="sum_title">{{ req.title }}</div>    
+        <div class="sum_type">{{ req.type|title_string }}</div>
+        <a class="index_link" href="#toc_{{ req.index }}">
+            <div class="sum_index index">{{ req.index }}</div>
+        </a>
+    </div>
+    <div class="sum_requirement">{{ req.requirement }}</div>
+    <div class="sum_description">{{ req.description }}</div>
+</div>
