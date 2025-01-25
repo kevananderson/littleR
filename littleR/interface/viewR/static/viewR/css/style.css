@@ -1,7 +1,3 @@
-:root {
-    --menu_height: 50px;
-}
-
 body {
     margin: 0;
     padding: 0;
@@ -9,69 +5,8 @@ body {
     font-size: 16px;
 }
 
-/* menu */
-div.menu{
-    height: var(--menu_height);
-    width: 100%;
-    vertical-align: top;
-
-}
-div.menu img{
-    display: inline;
-    max-width: 100%;
-    height: var(--menu_height);
-}
-div.menu ul{
-    display: inline;
-    vertical-align: top;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-div.menu li {
-    display: inline-block;
-    height: var(--menu_height);
-    vertical-align: top;
-}
-a.menu_link{
-    display: inline-block;
-    padding: 14px 16px;
+a{
     text-decoration: none;
-}
-a.menu_link:visited{
-    color: inherit; 
-}
-div.menu div.dropdown{
-    position: relative;
-    display: inline-block;
-}
-/* Show the dropdown menu on hover */
-div.dropdown:hover .drop_content {
-    display: block;
-}
-div.menu div.drop_text{
-    padding: 14px 16px;
-    font-size: 16px;
-}
-div.drop_content{
-    display: none;
-    position: absolute;
-    background-color: lightgray;
-    min-width: 160px;
-    z-index: 1;
-}
-div.menu button{
-    display: inline;
-    background: none!important;
-    border: none;
-    padding: 14px 16px!important;
-    cursor: pointer;
-    font-size: 16px;
-}
-div.menu_feedback{
-    display: inline;
-    float: right;
-    margin-right: 10px;
 }
 
 div.container{
@@ -81,20 +16,20 @@ div.container{
 }
 
 div.navigation{
+    border-right: 1px solid gainsboro;
     width: 10%;
-    min-width: 150px;
+    min-width: 152px;
     display: table-cell;
 }
 
 div.content{
     display: table-cell;
-}
-
-div.toc{
     padding: 20px;
 }
 
-.toc_item{
+/* toc table formatting */
+
+div.toc_item{
     white-space: nowrap;
     display: table;
     margin: 4px;
@@ -102,17 +37,13 @@ div.toc{
     border-collapse: collapse;
 }
 
-.toc_item div{
+div.toc_item > div, div.toc_item > a{
     display: table-cell;
     white-space: nowrap;
     padding: 0px 4px;
 }
 
-.toc_item .index{
-    display: inline-block;
-}
-
-.toc_item .requirement{
+div.toc_item a.titlement{
     width: 100%;
     max-width: 0;
     overflow: hidden;
@@ -120,17 +51,60 @@ div.toc{
     white-space: nowrap;
 }
 
+/* summary table formatting */
+
+div.summary_title{
+    white-space: nowrap;
+    display: table;
+    margin: 4px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+div.summary_title > div, div.summary_title > a{
+    display: table-cell;
+    white-space: nowrap;
+    padding: 0px 4px;
+}
+
+div.summary_title a.title{
+    width: 100%;
+    max-width: 0;
+    white-space: normal;
+}
+
+div.summary_item{
+    margin-top: 16px;
+}
+
+div.summary_item div.requirement, div.summary_item div.description{
+    margin-bottom: 8px;
+}
+
+div.summary_item div.description{
+    font-size: 12px;
+}
+
+
+/* indentation */
+
+div.ord_1, a.ord_1{
+    padding-left: 4px !important;  
+}
+
+div.ord_2, a.ord_2{
+    padding-left: 14px !important;  
+}
+
+div.ord_3, a.ord_3{
+    padding-left: 24px !important;  
+}
+
+/* general styling */
+
 .ord{
     font-style: italic;
     color: rgb(168, 168, 168);
-}
-
-div.ord_1{
-    padding-left: 4px;  
-}
-
-div.ord_2{
-    padding-left: 14px;  
 }
 
 .title{
@@ -142,15 +116,29 @@ div.ord_2{
     color: black;
 }
 
+
 .index{
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: bold;
-    color: black;
-    background-color: lightgray;
-    border-color: black;
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 3px;
-    padding: 2px;
+    display: inline-block;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-weight: bold !important;
+    border-width: 1px !important;
+    border-radius: 3px !important;
+    padding: 2px !important;
+    color: black !important;
+    background-color: lightgray !important;
+    border-color: black !important;
+    border-style: solid !important;
 }
 
+.type{
+    display: inline-block;
+    font-weight: bold !important;
+    border-width: 1px !important;
+    border-radius: 3px !important;
+    padding: 2px !important;
+    color: black !important;
+    background-color: yellow !important;
+    border-color: black !important;
+    border-style: solid !important;
+}

@@ -76,7 +76,7 @@ class StdView(Standard):
         for i,req in enumerate(tree_top):
 
             idx = str(i+1)
-            view.append( summary_item_template.render({"depth": depth, 'req':req, 'idx':idx}, request) )
+            view.append( summary_item_template.render({'depth': depth, 'depth_plus': depth+1, 'req':req, 'idx':idx}, request) )
 
             for i,child in enumerate(tree.children(req)):
                 child_idx = idx+"."+str(i+1)
@@ -120,7 +120,7 @@ class StdView(Standard):
         view = []
 
         # render the child
-        view.append( template.render({"depth": depth, 'req':req, 'idx':idx}, request) )
+        view.append( template.render({"depth": depth, 'depth_plus': depth+1, 'req':req, 'idx':idx}, request) )
 
         # keep going down recursively        
         for i,child in enumerate(tree.children(req)):
