@@ -12,8 +12,8 @@ class ReqText(forms.Form):
             ]
   
     index = forms.CharField(widget=forms.HiddenInput())
-    title = forms.CharField(label="Title", max_length=300, required=False)
     type = forms.ChoiceField(label="Type", choices=choices, widget=forms.Select)
+    title = forms.CharField(label="Title", max_length=300, required=False)
     requirement = forms.CharField(label="Requirement", widget=forms.Textarea, required=False)
     description = forms.CharField(label="Description", widget=forms.Textarea, required=False)
     assumptions = forms.CharField(label="Assumptions", widget=forms.Textarea, required=False)
@@ -42,12 +42,12 @@ class ReqRelationParent(forms.Form):
     """Form for adding a relationship to a requirement."""
     
     index = forms.CharField(widget=forms.HiddenInput())
-    new_parent = forms.CharField(label="Parent Index", max_length=9, required=False)
+    new_parent = forms.CharField(label="Upstream Index", max_length=9, required=False)
     new_related = forms.CharField(label="Related Index", max_length=9, required=False)
 
 class ReqRelationChild(forms.Form):
     """Form for adding a relationship to a requirement."""
     
     index = forms.CharField(widget=forms.HiddenInput())
-    new_child = forms.CharField(label="Child Index", max_length=9, required=False)
+    new_child = forms.CharField(label="Downstream Index", max_length=9, required=False)
     new_related = forms.CharField(label="Related Index", max_length=9, required=False)

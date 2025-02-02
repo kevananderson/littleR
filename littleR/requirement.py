@@ -114,6 +114,14 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
         if label_lower not in self.label:
             self.label.add(label_lower)
 
+    def labels(self):
+        """Returns the sorted labels of the requirement.
+
+        Returns:
+            list: the labels of the requirement sorted.
+        """
+        return sorted(list(self.label))        
+
     def delete_label(self, label):
         """Deletes a label from the requirement.
 
@@ -242,7 +250,6 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
         
         return []
         
-
     def int_index(self):
         """Returns the index as an integer value.
 

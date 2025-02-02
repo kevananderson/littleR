@@ -127,20 +127,6 @@ class TreeFilter():
             parents.extend(parent.parent())
         return False
 
-    def child_labels(self, req):
-        """Return a matched and unmatched labels for child requirements."""
-        matched = set()
-        unmatched = set()
-        for child in req.child:
-            for l in child.label:
-                if l in self._label:
-                    matched.add(l)
-                else:
-                    unmatched.add(l)
-            for  l in matched:
-                if l in unmatched:
-                    unmatched.remove(l)
-        return list(matched), list(unmatched)
 
     @staticmethod
     def has_label(req, labels):

@@ -103,7 +103,7 @@ function submit_form_on_change(form_id) {
 }
 
 function delete_label(label) {
-    var form = $('#delete_req_label_form')
+    var form = $('#req_label_form')
     var data = form.serializeArray(); // convert form to array
     data.push({name: "label", value: label});
     $.ajax({
@@ -115,7 +115,7 @@ function delete_label(label) {
                 $('#req_label').replaceWith(data['req_label']);
 
                 //set up the click event for the delete label button
-                $("button.delete-label").click(function() {
+                $("button.delete_label").click(function() {
                     var label_text = $(this).attr('data-label');
                     delete_label(label_text);
                 });
@@ -139,7 +139,7 @@ function add_label() {
                 $('#id_new_label').val('');
 
                 //set up the click event for the delete label button
-                $("button.delete-label").click(function() {
+                $("button.delete_label").click(function() {
                     var label_text = $(this).attr('data-label');
                     delete_label(label_text);
                 });
@@ -149,7 +149,7 @@ function add_label() {
 }
 
 function delete_relation(index) {
-    var form = $('#delete_req_relation_form')
+    var form = $('#req_relation_form')
     var data = form.serializeArray(); // convert form to array
     data.push({name: "delete", value: index});
     $.ajax({
@@ -165,6 +165,10 @@ function delete_relation(index) {
                     var data_index = $(this).attr('data-index');
                     delete_relation(data_index);
                 });
+                $("div.index").click(function() {
+                    var id = '#'+$(this).attr('id');
+                    copy_to_clipboard(id);
+                });                
             }
         }
     });
@@ -191,6 +195,10 @@ function add_relation() {
                     var data_index = $(this).attr('data-index');
                     delete_relation(data_index);
                 });
+                $("div.index").click(function() {
+                    var id = '#'+$(this).attr('id');
+                    copy_to_clipboard(id);
+                });                
             }
         }
     });
@@ -220,7 +228,7 @@ $(document).ready(function() {
     }
 
     //set up the click event for the delete label button
-    $("button.delete-label").click(function() {
+    $("button.delete_label").click(function() {
         var label_text = $(this).attr('data-label');
         delete_label(label_text);
     });
@@ -233,11 +241,10 @@ $(document).ready(function() {
 
     //set up the click event for the delete relation button
     $("button.delete-relation").click(function() {
-        var data_relation = $(this).attr('data-relation');
         var data_index = $(this).attr('data-index');
-        delete_relation(data_relation, data_index);
+        delete_relation(data_index);
     });
-   
+
     //set up the form submit event for the add relation button
     $("#add_req_relation_form").submit(function(event) {
         event.preventDefault(); // Prevent default form submission    

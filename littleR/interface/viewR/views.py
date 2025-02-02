@@ -106,20 +106,21 @@ def detail(request, req_id):
 
     #create the template for the labels, this displays the labels for deletion
     label_template = loader.get_template("viewR/req_label.html")
-    req_label = label_template.render({"req": req}, request)
+    labels = req.labels()
+    req_label_form = label_template.render({"req": req, "labels": labels}, request)
 
     #create the label form, this lets the user add a new label
-    req_label_form = ReqLabel(req_content)
+    add_req_label_form = ReqLabel(req_content)
     
     #create the template for related items, this displays the related items for deletion
     relation_template = loader.get_template("viewR/req_relation.html")
-    req_relation = relation_template.render({"req": req}, request)
+    req_relation_form = relation_template.render({"req": req}, request)
 
     #create the relation form, this lets the user add a new relation
     if req.is_customer():
-        req_relation_form = ReqRelationChild(req_content)
+        add_req_relation_form = ReqRelationChild(req_content)
     else:
-        req_relation_form = ReqRelationParent(req_content)
+        add_req_relation_form = ReqRelationParent(req_content)
 
     # use the template to display the requirement
     req_template = loader.get_template("viewR/req_detail.html")
@@ -127,10 +128,10 @@ def detail(request, req_id):
         "req": req,
         "req_path_form": req_path_form,
         "req_text_form": req_text_form,
-        "req_label": req_label,
         "req_label_form": req_label_form,
-        "req_relation": req_relation,
+        "add_req_label_form": add_req_label_form,
         "req_relation_form": req_relation_form,
+        "add_req_relation_form": add_req_relation_form,
     }
     detail = req_template.render(detail_content, request)
 

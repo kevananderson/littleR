@@ -33,19 +33,18 @@ class Tree():
         This only filters based on customer, label, and not_label.
         """
         children = []
-        matched, unmatched = self._tree_filter.child_labels(req)
         for child in req.child:
             # exclude on customer first
             if not self._tree_filter.project_or_customer(child):
                 continue
             
             # find the matching labels if any
-            if TreeFilter.has_label(child, matched):
+            if TreeFilter.has_label(child, self._tree_filter._label):
                 children.append(child)
                 continue
             
             # exclude on unmatched labels
-            if TreeFilter.has_label(child, unmatched):
+            if TreeFilter.has_label(child, self._tree_filter._not_label):
                 continue
 
             # take what has no labels

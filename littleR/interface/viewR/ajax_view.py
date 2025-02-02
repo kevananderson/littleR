@@ -104,7 +104,8 @@ def delete_req_label(request, req_id):
 
     #create the template for the labels, this displays the labels for deletion
     label_template = loader.get_template("viewR/req_label.html")
-    req_label = label_template.render({"req": req}, request)
+    labels = req.labels()
+    req_label = label_template.render({"req": req, "labels":labels}, request)
 
     return JsonResponse({'success': True, 'req_label': req_label})
 
@@ -126,7 +127,8 @@ def add_req_label(request, req_id):
 
     #create the template for the labels
     label_template = loader.get_template("viewR/req_label.html")
-    req_label = label_template.render({"req": req}, request)
+    labels = req.labels()
+    req_label = label_template.render({"req": req, "labels":labels}, request)
 
     return JsonResponse({'success': True, 'req_label': req_label})
 
@@ -143,9 +145,8 @@ def delete_req_relation(request, req_id):
         return JsonResponse({'success': False, 'message': "The information is missing from the form."})
     
     delete = request.POST["delete"]
-    relink = req.delete_relationship(delete)
-    if len(relink) >= 2:
-        standard.relink(relink)
+    #delete deletes from both sides of the relationship
+    req.delete_relationship(delete)
     standard.write()
 
     #create the template for the relations, this displays the relations for deletion

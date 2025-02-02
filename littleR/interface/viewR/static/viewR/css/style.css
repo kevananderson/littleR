@@ -9,6 +9,10 @@ a{
     text-decoration: none;
 }
 
+select{
+    font-size: 16px;
+}
+
 div.container{
     height: 100%;
     display: table;
@@ -37,7 +41,7 @@ div.toc_item{
     border-collapse: collapse;
 }
 
-div.toc_item > div, div.toc_item > a{
+div.toc_item > * {
     display: table-cell;
     white-space: nowrap;
     padding: 0px 4px;
@@ -49,6 +53,10 @@ div.toc_item a.titlement{
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+div.toc_item span.requirement{
+    font-style: italic;
+    color: gray;
 }
 
 /* summary table formatting */
@@ -85,6 +93,174 @@ div.summary_item div.description{
     font-size: 12px;
 }
 
+/* requirement formatting */
+/* general */
+div.detail label{
+    font-weight: normal;
+    font-size: 12px;
+    color: gray;
+    font-style: italic;
+    vertical-align: top;
+}
+button.delete{
+    background-color: transparent;
+    border: none;
+    border-radius: 3px;
+    color: gainsboro;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 0px 4px;
+    margin-left: -3px;
+}
+button.delete:hover{
+    color: white;
+    background-color: red;
+}
+
+/* req_path_form */
+#req_path_form{
+    display: table;
+    width: 100%;
+    border-bottom: solid 1px gainsboro;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+#req_path_form > * {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+/* req_text_form */
+#req_text_form > * {
+    width: 100%;
+    vertical-align: top;
+    margin-bottom: 20px;
+}
+#req_text_form input{
+    width: 80%;
+    border-color: transparent;
+    border-width: 1px;
+    border-style: solid;
+}
+#req_text_form #id_title{
+    font-size: 16px;
+    font-weight: bold;
+}
+#req_text_form input:hover{
+    border-color: gainsboro;
+    border-radius: 3px;
+}
+#req_text_form textarea{
+    width: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    border-color: transparent;
+    border-width: 1px;
+    border-style: solid;
+    field-sizing: content;
+    resize: vertical;
+}
+#req_text_form textarea:hover{
+    border-color: gainsboro;
+    border-radius: 3px;
+}
+
+/* req_label */
+#req_label{
+    margin-bottom: 20px;
+}
+#req_label > * {
+    display: inline-block;
+}
+#req_label ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+#req_label li{
+    display: inline-block;
+    border: solid 1px gainsboro;
+    border-radius: 3px;
+    padding: 2px 4px;
+    margin-right: 20px;
+}
+
+/* add_req_label_form */
+#add_req_label_form > * {
+    display: inline;
+    margin-bottom: 20px;
+}
+#add_req_label_form > * {
+    display: inline;
+}
+
+/* req_relation_form */
+#req_relation_form{
+    margin-bottom: 20px;
+}
+div.relation{
+    margin-bottom: 20px;
+}
+div.relation label{
+    display: block;
+    margin-bottom: 4px;
+}
+div.relation ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    margin-left: 20px;
+}
+li.relation_list_item{
+    display: table;
+    margin-bottom: 4px;
+}
+li.relation_list_item > * {
+    display: table-cell;
+    vertical-align: top;
+    white-space: nowrap;
+    padding: 0px 4px;
+}
+li.relation_list_item a.titlement{
+    width: 100%;
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* add_req_relation_form */
+#add_req_relation_form > * {
+    display: inline;
+    vertical-align: middle;
+}
+#add_req_relation{
+    display: inline-table;
+}
+#add_req_relation *{
+    display: table-cell;
+    vertical-align: middle;
+    margin: 4px;
+}
+#add_req_relation div{
+    display: table-row;
+}
+
+
+
+
+div.detail select{
+    border-color: transparent;
+    /* for Firefox */
+    -moz-appearance: none;
+    /* for Chrome */
+    -webkit-appearance: none;
+}
+div.detail select:hover{
+    border-color: gainsboro;
+    border-radius: 3px;
+}
+
 
 /* indentation */
 
@@ -114,6 +290,10 @@ div.ord_3, a.ord_3{
 
 .requirement{
     color: black;
+}
+
+.right{
+    float: right;
 }
 
 

@@ -1,14 +1,16 @@
 <div id="req_relation">
     <div class="relation">
-        <div class="label">Parent:</div>
+        <label for="req_parent_list">Upstream Requirements: </label>
         <ul id="req_parent_list">
         {% for parent in req.parent %}
-            <li>
-                <div><div class="index">{{parent.index}}</div></div>
-                <div class="title {{req.type}}">{{parent.title}}</div>
-                <div class="requirement">{{parent.requirement}}</div>
+            <li class="relation_list_item">
+                <div><div id="{{ parent.index }}" class="index">{{ parent.index }}</div></div>
+                <a class="titlement {{ parent.type }}" href="/viewR/req/{{ parent.index }}">
+                    <span class="title">{{ parent.title }}</span> 
+                    <span class="requirement">{{ parent.requirement }}</span>
+                </a>
                 {% if parent.type != 'customer' %}
-                    <button type="button" class="delete-relation" data-index="{{parent.index}}">x</button>
+                    <button type="button" class="delete-relation delete" data-index="{{ parent.index }}">x</button>
                 {% endif %}
                 
             </li>
@@ -16,29 +18,33 @@
         </ul>
     </div>
     <div class="relation">
-        <div class="label">Children:</div>
+        <label for="req_child_list">Downstream Requirements: </label>
         <ul id="req_child_list">
         {% for child in req.child %}
-            <li>
-                <div><div class="index">{{child.index}}</div></div>
-                <div class="title {{req.type}}">{{child.title}}</div>
-                <div class="requirement">{{child.requirement}}</div>
+            <li class="relation_list_item">
+                <div><div id="{{ child.index }}" class="index">{{ child.index }}</div></div>
+                <a class="titlement {{ child.type }}" href="/viewR/req/{{ child.index }}">
+                    <span class="title">{{ child.title }}</span> 
+                    <span class="requirement">{{ child.requirement }}</span>
+                </a>
                 {% if child.type == 'customer' %}
-                    <button type="button" class="delete-relation" data-index="{{child.index}}">x</button>
+                    <button type="button" class="delete-relation delete" data-index="{{ child.index }}">x</button>
                 {% endif %}            
             </li>
         {% endfor %}
         </ul>
     </div>
     <div class="relation">
-        <div class="label">Related To:</div>
+        <label for="req_parent_list">Related Requirements:</label>
         <ul id="req_parent_list">
         {% for related in req.related %}
-            <li>
-                <div><div class="index">{{related.index}}</div></div>
-                <div class="title {{req.type}}">{{related.title}}</div>
-                <div class="requirement">{{related.requirement}}</div>
-                <button type="button" class="delete-relation" data-index="{{related.index}}">x</button>
+            <li class="relation_list_item">
+                <div><div id="{{ related.index }}" class="index">{{ related.index }}</div></div>
+                <a class="titlement {{ related.type }}" href="/viewR/req/{{ related.index }}">
+                    <span class="title">{{ related.title }}</span> 
+                    <span class="requirement">{{ related.requirement }}</span>
+                </a>
+                <button type="button" class="delete-relation delete" data-index="{{ related.index }}">x</button>
             </li>
         {% endfor %}
         </ul>
