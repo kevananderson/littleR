@@ -79,6 +79,7 @@ div.summary_title a.title{
     width: 100%;
     max-width: 0;
     white-space: normal;
+    text-decoration: underline;
 }
 
 div.summary_item{
@@ -274,6 +275,14 @@ div.ord_2, a.ord_2{
 
 div.ord_3, a.ord_3{
     padding-left: 24px !important;  
+}
+
+div.ord_4, a.ord_4{
+    padding-left: 34px !important;  
+}
+
+div.ord_5, a.ord_5{
+    padding-left: 44px !important;  
 }
 
 /* general styling */
