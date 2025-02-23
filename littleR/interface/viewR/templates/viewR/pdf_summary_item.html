@@ -1,14 +1,15 @@
 {% load formatting %}
 
-<div class="pdf_summary_item">
+<div class="summary_item">
     <div class="summary_title">
+        <div id="{{ req.index }}" class="page_anchor"></div>
         <div class="ord ord_{{ depth }}">{{ idx }}</div>
-        <div class="sum_title">{{ req.title }}</div>    
-        <div class="sum_type">{{ req.type|title_string }}</div>
+        <div class="title">{{ req.title }}</div>    
+        <div><div class="type">{{ req.type|title_string }}</div></div>
         <a class="index_link" href="#toc_{{ req.index }}">
-            <div class="sum_index index">{{ req.index }}</div>
+            <div class="index">{{ req.index }}</div>
         </a>
     </div>
-    <div class="sum_requirement">{{ req.requirement }}</div>
-    <div class="sum_description">{{ req.description }}</div>
+    <div class="requirement ord_{{ depth_plus }}">{{ req.requirement|span_shall }}</div>
+    <div class="description ord_{{ depth_plus }}">{{ req.description }}</div>
 </div>

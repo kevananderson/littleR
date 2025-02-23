@@ -9,7 +9,12 @@ Returns:
     JsonResponse: The response object.
 """
 import os
-from xhtml2pdf import pisa
+import asyncio
+
+PYPPETEER_CHROMIUM_REVISION = '1263111'
+os.environ['PYPPETEER_CHROMIUM_REVISION'] = PYPPETEER_CHROMIUM_REVISION
+
+from pyppeteer import launch
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
@@ -52,9 +57,6 @@ def pdf_write(request, action):
 
 def pdf_summary(request):
 
-    #enable pisa logging
-    pisa.showLogging()
-
     #collect variables needed specifically for the pdf
     standard = Std.model()
     meta_title = "PDF Summary"
@@ -66,25 +68,23 @@ def pdf_summary(request):
         "image_name": "project_logo.png",
     }
     pdf_content = common_content(request, title_content)
-    pdf_content["content"] = StdView.summary(request, 100) #depth can also be changed
+    pdf_content["content"] = StdView.summary(request, 100,pdf=True) #depth can also be changed
     pdf_content["meta_title"] = meta_title
     pdf_content["static_root"] = static_root
 
     pdf_template = loader.get_template("viewR/pdf.html")
     pdf_html = pdf_template.render(pdf_content, request)
     
-    # write the pdf
+    # pdf file name
     pdf_dir = os.path.join( standard.get_report_path(), "project" ).replace("\\", "/") 
     if not os.path.isdir(pdf_dir):
         os.makedirs(pdf_dir, exist_ok=True)
-
     pdf_filename = os.path.join( pdf_dir, "Project Summary.pdf" ).replace("\\", "/")
-    with open(pdf_filename, "w+b") as pdf_file:
-        pisa_status = pisa.CreatePDF(pdf_html, dest=pdf_file)
 
-        if pisa_status.err:
-            message = "Error writing the PDF."
-            return JsonResponse({'success': False, 'message': message})
+    #write pdf
+    if not write_pdf(pdf_html, pdf_filename):
+        message = "Error writing the PDF."
+        return JsonResponse({'success': False, 'message': message})
 
     message = "Summary Written"
     return JsonResponse({'success': True, 'message': message})
@@ -95,7 +95,7 @@ def preview_summary(request):
     # pdf
     pdf_content = common_content(request)
     pdf_content["menu"] = menu_rendered(request)
-    pdf_content["content"] = StdView.summary(request, 100) #depth can also be changed
+    pdf_content["content"] = StdView.summary(request, 100, pdf=True) #depth can also be changed
 
     # page
     page_template = loader.get_template("viewR/pdf_page.html")
@@ -172,3 +172,19 @@ def render_title( content, request ):
     title_template = loader.get_template("viewR/pdf_title.html")
     title_html = title_template.render(content, request)
     return title_html
+
+def write_pdf(html, filename):
+    """Write the pdf."""
+    #try:
+    asyncio.new_event_loop().run_until_complete(generate_pdf(html, filename))
+    #except Exception as e:
+    #    return False
+    return True
+
+async def generate_pdf(html, filename):
+    """Generate the pdf."""
+    browser = await launch(handleSIGINT=False, handleSIGTERM=False,handleSIGHUP=False)
+    page = await browser.newPage()
+    await page.goto('http://localhost:8000/viewR/preview/summary')
+    await page.pdf({'path': filename, 'format': 'letter'})
+    await browser.close()

@@ -1,12 +1,34 @@
 :root {
     --menu_height: 50px;
+    --neg_menu_height: -60px;
+}
+
+/* if we have a menu, we need to move the container down */
+div.container{
+    margin-top: var(--menu_height);
+}
+div.navigation{
+    margin-top: var(--menu_height);
+}
+div.page_anchor{
+    top: var(--neg_menu_height);
 }
 
 /* over all menu style */
 div.menu{
     height: var(--menu_height);
+    position: fixed;
+    top: 0;
     width: 100%;
     vertical-align: top;
+}
+div.menu a{
+    text-decoration: none;
+}
+@media print{
+    div.menu{
+        display: none !important;
+    }
 }
 
 /* logo image */

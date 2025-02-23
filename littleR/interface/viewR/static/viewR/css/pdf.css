@@ -1,106 +1,171 @@
-:root {
-    --menu_height: 50px;
-}
-
+/* top level elements */
 body {
     margin: 0;
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
 }
-
-div.menu{
-    height: var(--menu_height);
-    width: 100%;
+a{
+    text-decoration: none;
+}
+div.page_anchor{
+    display: block;
+    position: relative;
+    visibility: hidden;
 }
 
-div.menu img{
-    max-width: 100%;
-    max-height: 100%;
-    display: inline;
-}
-div.menu button{
-    display: inline;
-}
 
-div.container{
-    top: var(--menu_height);
-    height: 100%;
-    display: table;
-    table-layout: fixed;
-}
-
-div.navigation{
-    width: 10%;
-    min-width: 150px;
-    display: table-cell;
-}
-
-div.content{
-    display: table-cell;
-}
-
-div.toc{
+/* title */
+div.title_page{
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
     padding: 20px;
 }
+div.title_page *{
+    margin: auto;
+    text-align: center;
+}
+#logo{
+    max-height: 200px;
+    max-width: 80%;
+    margin: auto;
+    display: block;
+}
+@media print{
+    div.title_page{
+        page-break-after: always;
+    }
+}
 
-.toc_item{
+/* toc */
+div.toc{
+    margin: 5% 10%;
+    font-size: 16px;
+}
+div.toc_item{
     white-space: nowrap;
     display: table;
     margin: 4px;
     width: 100%;
     border-collapse: collapse;
 }
+div.toc_item > * {
+    display: table-cell;
+    white-space: nowrap !important;
+    padding: 0px 4px;
+}
+div.toc_item div.titlement{
+    width: 100%;
+    max-width: 0;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+div.toc_item span.requirement{
+    font-size: 12px;
+    font-style: italic;
+    color: gray;
+}
+@media print {
+    div.toc{
+        page-break-after: always;
+    }
+}
 
-.toc_item div{
+/* summary table formatting */
+div.summary{
+    margin: 5% 10%;
+    font-size: 16px;
+}
+div.summary_title{
+    white-space: nowrap;
+    display: table;
+    margin: 4px;
+    width: 100%;
+    border-collapse: collapse;
+}
+div.summary_title > div, div.summary_title > a{
     display: table-cell;
     white-space: nowrap;
     padding: 0px 4px;
 }
-
-.toc_item .index{
-    display: inline-block;
-}
-
-.toc_item .requirement{
+div.summary_title div.title{
     width: 100%;
     max-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
+    text-decoration: underline;
 }
+
+div.summary_item{
+    margin-top: 16px;
+}
+
+div.summary_item div.requirement, div.summary_item div.description{
+    margin-bottom: 8px;
+}
+
+div.summary_item div.description{
+    font-size: 12px;
+}
+
+
+
+/* indentation */
+div.ord_1, a.ord_1{
+    padding-left: 4px !important;  
+}
+div.ord_2, a.ord_2{
+    padding-left: 14px !important;  
+}
+div.ord_3, a.ord_3{
+    padding-left: 24px !important;  
+}
+div.ord_4, a.ord_4{
+    padding-left: 34px !important;  
+}
+div.ord_5, a.ord_5{
+    padding-left: 44px !important;  
+}
+
 
 .ord{
     font-style: italic;
-    color: rgb(168, 168, 168);
-}
-
-div.ord_1{
-    padding-left: 4px;  
-}
-
-div.ord_2{
-    padding-left: 14px;  
+    color: gray;
 }
 
 .title{
-    font-weight: bold;
     color: black;
 }
 
 .requirement{
     color: black;
 }
-
-.index{
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: bold;
-    color: black;
-    background-color: lightgray;
-    border-color: black;
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 3px;
-    padding: 2px;
+.shall{
+    font-style: italic;
 }
 
+.index{
+    display: inline-block;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-weight: bold !important;
+    border-width: 1px !important;
+    border-radius: 3px !important;
+    padding: 2px !important;
+    color: black !important;
+    background-color: lightgray !important;
+    border-color: black !important;
+    border-style: solid !important;
+}
+
+.type{
+    display: inline-block;
+    font-weight: bold !important;
+    border-width: 1px !important;
+    border-radius: 3px !important;
+    padding: 2px !important;
+    color: black !important;
+    border-color: yellow !important;
+    border-style: solid !important;
+}

@@ -44,7 +44,10 @@ class StdView(Standard):
 
         # toc
         toc_template = loader.get_template("viewR/toc.html")
-        toc_html = toc_template.render({"toc_list": view}, request)
+        toc_content = { "toc_list": view }
+        if pdf:
+            toc_content["header"]= "Table of Contents"
+        toc_html = toc_template.render(toc_content, request)
 
         return toc_html
 
@@ -84,7 +87,10 @@ class StdView(Standard):
 
         # summary
         summary_template = loader.get_template("viewR/summary.html")
-        summary_html = summary_template.render({"sum_list": view}, request)
+        summary_content = { "sum_list": view }
+        if pdf:
+            summary_content["header"]= "Requirements Summary"
+        summary_html = summary_template.render(summary_content, request)
 
         return summary_html
 

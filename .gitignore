@@ -12,3 +12,4 @@ dist
 .ruff_cache
 */scratch/*
 test/scratch/scratch.txt
+.coverage

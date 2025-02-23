@@ -1,11 +1,13 @@
 pytest
-wheel
+pytest-cov
+asyncio
 ruamel.yaml.string
+Django
+pyppeteer
+wheel
 sphinx
 sphinx-autoapi
 furo
-Django
 ruff
 pylint
 black
-xhtml2pdf

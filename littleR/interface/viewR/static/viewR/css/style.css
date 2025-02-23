@@ -1,38 +1,28 @@
+/* top level elements */
 body {
     margin: 0;
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
 }
-
 a{
     text-decoration: none;
 }
-
 select{
     font-size: 16px;
 }
-
-div.container{
-    height: 100%;
-    display: table;
-    table-layout: fixed;
-}
-
 div.navigation{
+    position: fixed;
+    width: 152px;
     border-right: 1px solid gainsboro;
-    width: 10%;
-    min-width: 152px;
-    display: table-cell;
+    margin-right: 2px;
 }
-
 div.content{
-    display: table-cell;
     padding: 20px;
+    margin-left: 152px;
 }
 
 /* toc table formatting */
-
 div.toc_item{
     white-space: nowrap;
     display: table;
@@ -40,13 +30,11 @@ div.toc_item{
     width: 100%;
     border-collapse: collapse;
 }
-
 div.toc_item > * {
     display: table-cell;
     white-space: nowrap;
     padding: 0px 4px;
 }
-
 div.toc_item a.titlement{
     width: 100%;
     max-width: 0;
@@ -124,7 +112,7 @@ button.delete:hover{
     width: 100%;
     border-bottom: solid 1px gainsboro;
     padding-bottom: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
 }
 #req_path_form > * {
     display: table-cell;
@@ -187,9 +175,10 @@ button.delete:hover{
 }
 
 /* add_req_label_form */
-#add_req_label_form > * {
-    display: inline;
-    margin-bottom: 20px;
+#add_req_label_form{
+    border-bottom: solid 1px gainsboro;
+    padding-bottom: 30px;
+    margin-bottom: 10px;
 }
 #add_req_label_form > * {
     display: inline;
@@ -264,7 +253,6 @@ div.detail select:hover{
 
 
 /* indentation */
-
 div.ord_1, a.ord_1{
     padding-left: 4px !important;  
 }
@@ -292,8 +280,10 @@ div.ord_5, a.ord_5{
     color: rgb(168, 168, 168);
 }
 
-.title{
+.shall{
     font-weight: bold;
+}
+.title{
     color: black;
 }
 

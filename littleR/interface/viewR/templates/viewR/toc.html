@@ -1,4 +1,7 @@
 <div class="content toc">
+    {% if header %}
+    <h2>{{ header }}</h2>
+    {% endif %}
     {% for toc_item in toc_list %}
         {{toc_item}}
     {% endfor %}

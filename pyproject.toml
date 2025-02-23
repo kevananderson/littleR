@@ -51,3 +51,19 @@ ignore = [
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.pytest.ini_options]
+addopts = "--cov --cov-report html"
+
+[tool.coverage.run]
+source = [
+    "littleR",
+    "littleR/interface",
+]
+omit = [
+    "littleR/docs/*",
+    "littleR/customer/*",
+    "littleR/project/*",
+    "littleR/reports/*",
+    "littleR/test/*",
+]

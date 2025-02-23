@@ -13,9 +13,9 @@ def title_string(value):
     return value.title()
 
 @register.filter
-def bold_shall(value):
+def span_shall(value):
     """Bold the word 'shall' in a string."""
     # verify the input
     if not isinstance(value, str):
         raise TypeError("The value must be a string.")
-    return mark_safe(strip_tags(value).replace("shall", "<b>shall</b>"))
+    return mark_safe(strip_tags(value).replace("shall", '<span class="shall">shall</span>'))

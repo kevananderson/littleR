@@ -5,9 +5,9 @@
         <div class="ord ord_{{ depth }}">{{ idx }}</div>
         <a class="title" href="/viewR/req/{{ req.index }}">{{req.title}}</a>
         <div><div class="type {{ req.type }}">{{ req.type|title_string }}</div></div>
-        <div><div id="{{ req.index }}" class="sum_index index" >{{ req.index }}</div></div>
+        <div><div id="{{ req.index }}" class="index" >{{ req.index }}</div></div>
     </div>
-    <div class="requirement ord_{{ depth_plus }}">{{ req.requirement|bold_shall }}</div>
+    <div class="requirement ord_{{ depth_plus }}">{{ req.requirement|span_shall }}</div>
     <div class="description ord_{{ depth_plus }}">{{ req.description }}</div>
 </div>
    

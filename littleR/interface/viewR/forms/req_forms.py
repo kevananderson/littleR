@@ -13,11 +13,11 @@ class ReqText(forms.Form):
   
     index = forms.CharField(widget=forms.HiddenInput())
     type = forms.ChoiceField(label="Type", choices=choices, widget=forms.Select)
-    title = forms.CharField(label="Title", max_length=300, required=False)
+    title = forms.CharField(label="Title", max_length=60, required=False)
     requirement = forms.CharField(label="Requirement", widget=forms.Textarea, required=False)
     description = forms.CharField(label="Description", widget=forms.Textarea, required=False)
     assumptions = forms.CharField(label="Assumptions", widget=forms.Textarea, required=False)
-    component = forms.CharField(label="Component", max_length=100, required=False)
+    component = forms.CharField(label="Component", max_length=60, required=False)
 
 class ReqPath(forms.Form):
     """Form for editing the path of a requirement."""
