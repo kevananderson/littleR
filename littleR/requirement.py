@@ -70,6 +70,15 @@ class Requirement:  # pylint: disable=too-many-instance-attributes
         """
         return self._path
 
+    def rel_path(self):
+        """Returns the relative path where the requirement is defined.
+
+        Returns:
+            str: the path to the file defining the requirement
+        """
+        base_path = os.getcwd()
+        return os.path.relpath(self._path, base_path)
+
     def set_path(self, file_path):
         """Sets the path where the requirement is defined.
 

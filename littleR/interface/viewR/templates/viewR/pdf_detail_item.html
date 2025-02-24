@@ -1,0 +1,109 @@
+{% load formatting %}
+
+<div><div class="detail_item">
+
+    <div class="detail_header">
+        <div id="{{ req.index }}" class="page_anchor"></div>
+        <a class="index_link" href="#toc_{{ req.index }}">
+            <div class="index">{{ req.index }}</div>
+        </a>
+        <div><div class="path">{{ req.rel_path }}</div></div>
+        <div><div class="type">{{ req.type|title_string }}</div></div>
+    </div>
+
+    <div class="detail_title">
+        <div class="ord">{{ idx }}</div>
+        <div class="title">{{ req.title }}</div>    
+    </div>
+
+    {% if req.requirement %}
+    <div class="detail_data">     
+        <label>Requirement:</label>
+        <div class="requirement">{{ req.requirement|span_shall }}</div>
+    </div>
+    {% endif %}
+
+    {% if req.description %}
+    <div class="detail_data">
+        <label>Description:</label>
+        <div class="description">{{ req.description }}</div>
+    </div>
+    {% endif %}
+
+    {% if req.assumptions %}
+    <div class="detail_data">
+        <label>Assumptions:</label>
+        <div class="assumptions">{{ req.assumptions }}</div>
+    </div>
+    {% endif %}
+
+    {% if req.component %}
+    <div class="detail_data">
+        <label>Component:</label>
+        <div class="component">{{ req.component|title_string }}</div>
+    </div>
+    {% endif %}
+
+    {% if req.label %}
+    <div class="detail_data">
+        <label>Labels:</label>
+        <ul class="detail_label_list">
+            {% for label in req.label %}
+            <li>{{ label }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if req.parent %}
+    <div class="detail_relation">
+        <label>Upstream Requirements:</label>
+        <ul class="detail_list">
+            {% for parent in req.parent %}
+            <li class="detail_list_item">
+                <a href="#{{ parent.index }}"><div class="relation_index">{{ parent.index }}</div></a>
+                <div class="titlement">
+                    <span class="title">{{ parent.title }}</span> 
+                    <span class="requirement">{{ parent.requirement }}</span>
+                </div>    
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if req.child %}
+    <div class="detail_relation">
+        <label>Downstream Requirements:</label>
+        <ul class="detail_list">
+            {% for child in req.child %}
+            <li class="detail_list_item">
+                <a href="#{{ child.index }}"><div class="relation_index">{{ child.index }}</div></a>
+                <div class="titlement"> 
+                    <span class="title">{{ child.title }}</span> 
+                    <span class="requirement">{{ child.requirement }}</span>
+                </div>    
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if req.related %}
+    <div class="detail_relation">
+        <label>Related Requirements:</label>
+        <ul class="detail_list">
+            {% for related in req.related %}
+            <li class="detail_list_item">
+                <a href="#{{ related.index }}"><div class="relation_index">{{ related.index }}</div></a>
+                <div class="titlement"> 
+                    <span class="title">{{ related.title }}</span> 
+                    <span class="requirement">{{ related.requirement }}</span>
+                </div>    
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+</div></div>

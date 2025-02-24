@@ -46,54 +46,26 @@ def pdf_write(request, action):
         message = "The action is not valid."
         return JsonResponse({'success': False, 'message': message})
         
-    # we do different things depending on if we are making a summary or detail
-    if action == "summary":
-        return pdf_summary(request)
-    elif action == "detail":
-        return pdf_detail(request)
-
-    message = "Action not defined."
-    return JsonResponse({'success': False, 'message': message})
-
-def pdf_summary(request):
-
-    #collect variables needed specifically for the pdf
-    standard = Std.model()
-    meta_title = "PDF Summary"
-    static_root = str(settings.BASE_DIR) + "/viewR/static/viewR"
-    
-    # pdf
-    title_content = {
-        "static_root": static_root,
-        "image_name": "project_logo.png",
-    }
-    pdf_content = common_content(request, title_content)
-    pdf_content["content"] = StdView.summary(request, 100,pdf=True) #depth can also be changed
-    pdf_content["meta_title"] = meta_title
-    pdf_content["static_root"] = static_root
-
-    pdf_template = loader.get_template("viewR/pdf.html")
-    pdf_html = pdf_template.render(pdf_content, request)
-    
     # pdf file name
+    standard = Std.model()
     pdf_dir = os.path.join( standard.get_report_path(), "project" ).replace("\\", "/") 
     if not os.path.isdir(pdf_dir):
         os.makedirs(pdf_dir, exist_ok=True)
-    pdf_filename = os.path.join( pdf_dir, "Project Summary.pdf" ).replace("\\", "/")
 
-    #write pdf
-    if not write_pdf(pdf_html, pdf_filename):
-        message = "Error writing the PDF."
-        return JsonResponse({'success': False, 'message': message})
+    # we do different things depending on if we are making a summary or detail
+    if action == "summary":
+        url = "http://localhost:8000/viewR/pdf/summary"
+        filename = os.path.join( pdf_dir, "Project Summary.pdf" ).replace("\\", "/")
+    elif action == "detail":
+        url = "http://localhost:8000/viewR/pdf/detail"
+        filename = os.path.join( pdf_dir, "Project Details.pdf" ).replace("\\", "/")
+    return write_pdf(url, filename)
 
-    message = "Summary Written"
-    return JsonResponse({'success': True, 'message': message})
-
-def preview_summary(request):
-    """The preview summary view."""
-
+@csrf_exempt
+def pdf_summary(request):
+    """The summary view."""
     # pdf
-    pdf_content = common_content(request)
+    pdf_content = common_content(request, {"title": "Project Summary"} )
     pdf_content["menu"] = menu_rendered(request)
     pdf_content["content"] = StdView.summary(request, 100, pdf=True) #depth can also be changed
 
@@ -104,18 +76,11 @@ def preview_summary(request):
     return HttpResponse(page_html)
 
 def pdf_detail(request):
-    message = "pdf_detail not yet defined."
-    return JsonResponse({'success': False, 'message': message})
-
-def preview_detail(request):
-    """The preview detail view."""
-
-    #collect variables needed specifically for the preview
-    menu_html = menu_rendered(request)
-
+    """The detail view."""
     # pdf
-    pdf_content = common_content(request)
-    pdf_content["menu"] = menu_html
+    pdf_content = common_content(request, {"title": "Project Details"} )
+    pdf_content["menu"] = menu_rendered(request)
+    pdf_content["content"] = StdView.detail(request, 100, pdf=True) #depth can also be changed
 
     # page
     page_template = loader.get_template("viewR/pdf_page.html")
@@ -135,8 +100,10 @@ def common_content(request, title_content=None):
         raise TypeError("The title content must be a dictionary.")
     
     #title page
-    title_content["title"] = "Project Summary"
-    title_content["desc"] = "Requirements for the Project."
+    if "title" not in title_content:
+        title_content["title"] = "Project Summary"
+    if "desc" not in title_content:
+        title_content["desc"] = "Requirements for the Project."
     title_content["version"] = "0.0.1"
     title_content["date"] = "January 15, 2025"
     #title_content["line_1"] = ""
@@ -173,18 +140,20 @@ def render_title( content, request ):
     title_html = title_template.render(content, request)
     return title_html
 
-def write_pdf(html, filename):
+def write_pdf(url, filename):
     """Write the pdf."""
-    #try:
-    asyncio.new_event_loop().run_until_complete(generate_pdf(html, filename))
-    #except Exception as e:
-    #    return False
-    return True
+    try:
+        asyncio.new_event_loop().run_until_complete(generate_pdf(url, filename))
+    except Exception:
+        message = "PDF Error"
+        return JsonResponse({'success': False, 'message': message})
+    message = "PDF Written"
+    return JsonResponse({'success': True, 'message': message})
 
-async def generate_pdf(html, filename):
+async def generate_pdf(url, filename):
     """Generate the pdf."""
     browser = await launch(handleSIGINT=False, handleSIGTERM=False,handleSIGHUP=False)
     page = await browser.newPage()
-    await page.goto('http://localhost:8000/viewR/preview/summary')
+    await page.goto(url)
     await page.pdf({'path': filename, 'format': 'letter'})
     await browser.close()

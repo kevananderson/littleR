@@ -1,8 +1,8 @@
-<div class="content toc">
+<div class="content {{ class }}">
     {% if header %}
     <h2>{{ header }}</h2>
     {% endif %}
-    {% for toc_item in toc_list %}
-        {{toc_item}}
+    {% for view in view_list %}
+        {{ view }}
     {% endfor %}
 </div>

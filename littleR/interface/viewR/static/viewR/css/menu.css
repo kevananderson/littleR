@@ -74,7 +74,7 @@ div.menu li {
     font-size: 16px;
 }
 
-a.menu_item:visited, a.drop_item:visited{
+a.menu_item:visited, a.drop_item:visited, a.menu_item:link, a.drop_item:link{
     color: inherit; 
 }
 

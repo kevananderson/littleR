@@ -21,8 +21,8 @@ urlpatterns = [
     path("ajax_add_req_relation/<str:req_id>", ajax_view.add_req_relation, name="ajax_add_req_relation"),
     path("ajax_add_req", ajax_view.add_req, name="ajax_add_req"),
 
-    path("preview/summary", pdf_view.preview_summary, name="preview_summary"),
-    path("preview/detail", pdf_view.preview_detail, name="preview_detail"),
+    path("pdf/summary", pdf_view.pdf_summary, name="pdf_summary"),
+    path("pdf/detail", pdf_view.pdf_detail, name="pdf_detail"),
 
-    path("pdf/<str:action>", pdf_view.pdf_write, name="pdf_write"),
+    path("ajax_pdf/<str:action>", pdf_view.pdf_write, name="pdf_write"),
 ]

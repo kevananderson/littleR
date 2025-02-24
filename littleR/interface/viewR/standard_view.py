@@ -40,16 +40,19 @@ class StdView(Standard):
 
             for i,child in enumerate(tree.children(req)):
                 child_idx = idx+"."+str(i+1)
-                view.extend( StdView._toc_tree_child(request, toc_item_template,  tree, child,child_idx, depth+1, max_depth) )
+                view.extend( StdView._tree_child(request, toc_item_template,  tree, child,child_idx, depth+1, max_depth) )
 
         # toc
-        toc_template = loader.get_template("viewR/toc.html")
-        toc_content = { "toc_list": view }
+        toc_template = loader.get_template("viewR/content.html")
+        content = { 
+            "class": "toc",
+            "view_list": view, 
+            }
         if pdf:
-            toc_content["header"]= "Table of Contents"
-        toc_html = toc_template.render(toc_content, request)
+            content["header"]= "Table of Contents"
+        html = toc_template.render(content, request)
 
-        return toc_html
+        return html
 
     @staticmethod
     def summary(request, max_depth, pdf=False):
@@ -83,40 +86,63 @@ class StdView(Standard):
 
             for i,child in enumerate(tree.children(req)):
                 child_idx = idx+"."+str(i+1)
-                view.extend( StdView._sum_tree_child(request, summary_item_template,  tree, child,child_idx, depth+1, max_depth) )
+                view.extend( StdView._tree_child(request, summary_item_template,  tree, child, child_idx, depth+1, max_depth) )
 
         # summary
-        summary_template = loader.get_template("viewR/summary.html")
-        summary_content = { "sum_list": view }
+        summary_template = loader.get_template("viewR/content.html")
+        content = { 
+            "class": "summary",
+            "view_list": view, 
+            }
         if pdf:
-            summary_content["header"]= "Requirements Summary"
-        summary_html = summary_template.render(summary_content, request)
+            content["header"]= "Requirements Summary"
+        html = summary_template.render(content, request)
 
-        return summary_html
+        return html
 
+    def detail(request, max_depth, pdf=False):
+        # verify the input
+        if not isinstance(request, HttpRequest):
+            raise TypeError("The request must be an HttpRequest.")
+        if not isinstance(max_depth, int):
+            raise TypeError("The max depth must be an integer.")
+        if max_depth <= 0:
+            raise ValueError("The max depth must be a positive integer.")
+        if not isinstance(pdf, bool):
+            raise TypeError("The pdf flag must be a boolean.")
 
-    @staticmethod        
-    def _toc_tree_child(request, template, tree, req,idx, depth, max_depth):
-        # input verified elsewhere
-        
-        # handle the trivial case
-        if depth > max_depth:
-            return []
-        
+        # this view is only used for the pdf
+        detail_item_template = loader.get_template("viewR/pdf_detail_item.html")
+
+        # get the tree data
+        tree = Tree( Std.model(), TreeFilter({}))
+
+        #start with the top
+        tree_top = tree.top()
         view = []
+        depth = 1
+        for i,req in enumerate(tree_top):
 
-        # render the child
-        view.append( template.render({"depth": depth, 'req':req, 'idx':idx}, request) )
+            idx = str(i+1)
+            view.append( detail_item_template.render({'req':req, 'idx':idx}, request) )
 
-        # keep going down recursively        
-        for i,child in enumerate(tree.children(req)):
-            child_idx = idx+"."+str(i+1)
-            view.extend( StdView._toc_tree_child(request, template,  tree, child,child_idx, depth+1, max_depth))
-    
-        return view
-    
+            for i,child in enumerate(tree.children(req)):
+                child_idx = idx+"."+str(i+1)
+                view.extend( StdView._tree_child(request, detail_item_template,  tree, child, child_idx, depth+1, max_depth) )
+
+        # detail
+        detail_template = loader.get_template("viewR/content.html")
+        content = { 
+            "class": "detail",
+            "view_list": view,
+            "header": "Detailed Requirements",
+            }
+        html = detail_template.render(content, request)
+
+        return html
+   
     @staticmethod        
-    def _sum_tree_child(request, template, tree, req, idx, depth, max_depth):
+    def _tree_child(request, template, tree, req, idx, depth, max_depth):
         # input verified elsewhere
         
         # handle the trivial case
@@ -131,6 +157,6 @@ class StdView(Standard):
         # keep going down recursively        
         for i,child in enumerate(tree.children(req)):
             child_idx = idx+"."+str(i+1)
-            view.extend( StdView._sum_tree_child(request, template,  tree, child, child_idx, depth+1, max_depth) )
+            view.extend( StdView._tree_child(request, template,  tree, child, child_idx, depth+1, max_depth) )
     
         return view
