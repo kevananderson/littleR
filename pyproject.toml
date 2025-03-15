@@ -30,16 +30,24 @@ dynamic = [
     "dependencies",
     ]
 
-[tool.setuptools.dynamic]
-dependencies = {file = "requirements.txt"}
-
 [project.urls]
 Repository = "https://github.com/kevananderson/littleR"
 
-[tool.setuptools.packages.find]
+[project.scripts]
+littleR = "littleR.manage:cli"
+
+[tool.setuptools.dynamic]
+dependencies = {file = "requirements.txt"}
+
+
+#[tool.setuptools.packages.find]
 # All the following settings are optional:
-include = ["littleR"]
-exclude = ["test","docs","project","reports","customer"]  # empty by default
+#include = ["littleR"]
+#exclude = ["test","docs","project","reports","customer"]  # empty by default
+
+[tool.setuptools.package-data]
+# Add these folders even though they are not modules
+littleR = ["littleR/interface/*", "littleR/templates/*"]
 
 [tool.ruff.lint]
 select = [
