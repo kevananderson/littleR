@@ -34,7 +34,7 @@ dynamic = [
 Repository = "https://github.com/kevananderson/littleR"
 
 [project.scripts]
-littleR = "littleR.manage:cli"
+littleR = "littleR.manageR:cli"
 
 [tool.setuptools.dynamic]
 dependencies = {file = "requirements.txt"}
@@ -65,13 +65,13 @@ addopts = "--cov --cov-report html"
 
 [tool.coverage.run]
 source = [
-    "littleR",
-    "littleR/interface",
+    "src/littleR",
+    "src/littleR/interface",
 ]
 omit = [
-    "littleR/docs/*",
-    "littleR/customer/*",
-    "littleR/project/*",
-    "littleR/reports/*",
-    "littleR/test/*",
+    "./docs/*",
+    "./customer/*",
+    "./project/*",
+    "./reports/*",
+    "./test/*",
 ]

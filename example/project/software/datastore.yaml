@@ -1,0 +1,14 @@
+r00000008:
+  enabled: true
+  type: software
+  title: Read and Write to Files.
+  requirement: The software shall store the data within files that are read from and
+    written to.
+  description: The user will want to store things in multiple files. However, the
+    user will want to store all of the requirements in a directory. Organization of
+    that directory will be up to the user.
+  assumptions: This is an assumption.
+  parent_idx:
+  - r00000001
+  related_idx:
+  - r00000006

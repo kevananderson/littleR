@@ -1,5 +1,5 @@
 """Simple wrapper to make calling the CLI easier."""
 
-import littleR.manage
+import littleR.manageR
 
-littleR.manage.cli()
+littleR.manageR.cli()

@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""Script to run the littleR interface."""
+
+from littleR.manageR import main
+main()

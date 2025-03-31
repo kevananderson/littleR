@@ -1,8 +1,8 @@
 """Contains classes that deal with validation of the Standard."""
 
 import os
-from littleR.requirement import Requirement
 
+from littleR.requirement import Requirement
 
 class Validator:
     """The Validator class is responsible for validating the Standard.

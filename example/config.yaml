@@ -1,0 +1,6 @@
+configuration: 
+  version: 0.0.1
+project:
+  name: littleR
+  description: This is the requirements project for the littleR project.
+  logo: project/files/littleR.png

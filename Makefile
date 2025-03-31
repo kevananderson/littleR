@@ -7,8 +7,8 @@ ACTIVATE := $(VENV)/Scripts/activate
 DIST := dist
 EGGINFO := $(NAME).egg-info
 SPHINX := docs
-MAIN := main.py
-GUI := littleR/interface/manage.py
+MAIN := src/littleR/manageR.py
+
 
 .PHONY: env
 env: $(ACTIVATE) install
@@ -49,7 +49,9 @@ gui: $(ACTIVATE)
 	@echo *******
 	@echo run GUI
 	@echo *******
-	$(PYTHON) $(GUI) runserver
+	$(PYTHON) $(MAIN) gui
+#   GUI := src/littleR/interface/manage.py
+#	$(PYTHON) $(GUI) runserver
 
 .PHONY: format
 format: $(ACTIVATE)

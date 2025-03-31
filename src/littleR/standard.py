@@ -1,6 +1,7 @@
 """Standard class for the littleR project."""
 
 import os
+
 from littleR.validate import Validator
 from littleR.requirement import Requirement
 from littleR.folio import Folio
@@ -108,6 +109,14 @@ class Standard:  # pylint: disable=too-many-instance-attributes
 
         # get the config file
         self._get_config(directory)
+        if self.config is None:
+            #append example to the directory and try again
+            directory = os.path.join(directory, "example")
+            if os.path.isdir(directory):
+                self._get_config(directory)
+            if self.config is None:
+                raise FileNotFoundError("A config file was not found."
+                " It must be located in the project root or in the example folder.")
 
         # get the paths to read from
         self._get_paths(directory)

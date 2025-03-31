@@ -2,32 +2,61 @@
 
 import os
 import shutil
+import subprocess
+import webbrowser
 
+from context import littleR
 from littleR.standard import Standard
+
+def main():
+    """Main function to run command line for installed project.
+    
+    This has two functions:
+        * Run the command line interface for the littleR project.
+        * Start the gui and open the default web browser to local host.
+    """
+    # check if the user wants to run the command line interface or the GUI
+    if len(os.sys.argv) > 1 and os.sys.argv[1] == "gui":
+        _start_gui()
+    else:
+        cli()
 
 
 def cli():
     """Command line interface for the littleR project.
 
     This function provides a simple command line interface for the user to
-    interact with the littleR project. Some things that can be done are:
-        * Create a new project.
-        * Show the requirements for the littleR project, as an example.
-        * Remove the project files. [Warning: This will delete the project files.]
-        * Validate the project requirements.
+    interact with the littleR project. The options available are a list 
+    of functions and text. The user can select an option by entering the number
+    associated with the option. The selected function is then called.
     """
-    # setup functions that the user can call, see below for *Actions* defined locally
+    #still not sure if this should be provided as a parameter or not
     selections = [
         {"fn": _goodbye, "text": "Exit."},
         {"fn": _new_project, "text": "Create New Project."},
         {
             "fn": _littleR_project,
-            "text": "Start a new project with the requirements for the littleR Project.",
+            "text": "Populate Example Project (littleR Requirements).",
         },
         {"fn": _remove_project, "text": "Remove projects files."},
         {"fn": _validate_project, "text": "Validate project requirements."},
+        {"fn": _start_gui, "text": "Start the GUI."},
     ]
 
+    #verify input
+    if selections is None:
+        raise ValueError("Selections must not be None.")
+    for selection in selections:
+        if not isinstance(selection, dict):
+            raise TypeError("Selection items must be dicts.")
+        if "fn" not in selection or "text" not in selection:
+            raise ValueError("Selection items (dict) must contain 'fn' and 'text' keys.")
+        if not callable(selection["fn"]):
+            raise TypeError("Selection item 'fn' must be callable.")
+        if not isinstance(selection["text"], str):
+            raise TypeError("Selection item 'text' must be a string.")
+
+    #have the user make a selection
     while True:
         # prompt for the user input
         _print_cli_options(selections)
@@ -44,7 +73,7 @@ def cli():
             index = int(selection_index) - 1
             if index < 0 or index >= len(selections):
                 raise IndexError("Invalid user selected index.")
-            print(f"Index [{index+1}] selected.")
+            print(f"Option [{index+1}] selected.")
 
             # run the selected function
             selections[index]["fn"]()
@@ -143,6 +172,18 @@ def _validate_project():
             f"The report is located: {standard.validator().report_path().replace("\\", "/")}"
         )
 
+def _start_gui():
+    """Run administrative tasks."""
+    abs_path = os.path.abspath("./src/littleR/interface/manage.py")
+    process = subprocess.Popen(["./.venv/Scripts/python", abs_path, "runserver"])
+    webbrowser.open("http://localhost:8000/viewR")
+    try:
+        process.wait()
+    except KeyboardInterrupt as e:
+        process.terminate()
+        print("User stopped the server.")
+
+
 
 if __name__ == "__main__":
-    cli()
+    main()

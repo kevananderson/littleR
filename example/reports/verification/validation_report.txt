@@ -1,0 +1,8 @@
+Validation Report
+Problems: 2
+
+Customer path not found at project root.
+
+File: project/interface/interface.yaml
+		No data read from file file.
+		No data read from file file.

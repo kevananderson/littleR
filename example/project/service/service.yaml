@@ -1,0 +1,86 @@
+r00000001:
+  enabled: true
+  type: service
+  title: Requirements captured in human readable format.
+  requirement: The requirements shall be captured in the human readable format YAML.
+  description: Considered JSON, YAML, and XML. YAML was chosen for its ease of reading.
+  assumptions: There is an established python library for parsing YAML.
+  label:
+  - data storage
+
+r00000002:
+  enabled: true
+  type: service
+  title: Configuration management by GIT version control.
+  requirement: The requirements shall be managed using GIT.
+  description: This will have a similar workflow to software development.
+  assumptions: The tool is for software development. Future development could make
+    it easy for non developers to use.
+  label:
+  - configuration management
+  - git
+
+r00000003:
+  enabled: true
+  type: service
+  title: User Interface.
+  requirement: There shall be a web based user interface.
+  description: This will be in django.
+  component: gui
+  label:
+  - gui
+
+r00000004:
+  enabled: true
+  type: service
+  title: Project Verification.
+  requirement: There shall be command line interface for project verification. The
+    results will be pass or fail.
+  description: This will allow the user to push to a main repository and the main
+    repository will be able to use the command line tool to verify the project.
+  label:
+  - verification
+
+r00000005:
+  enabled: true
+  type: service
+  title: CLI Tasks.
+  requirement: There shall be a command line interface to help setup the project and
+    start the GUI.
+  description: This will allow the user to push to a main repository and the main
+    repository will be able to validate the project.
+  label:
+  - cli
+  parent_idx:
+  - r00000006
+  related_idx:
+  - r00000007
+
+r00000006:
+  enabled: true
+  type: service
+  title: Easy Setup
+  requirement: The task of setting up a project shall be easy. This includes a few
+    simple steps and good documentation.
+  description: This will allow the user to use the project quickly and easily.
+
+r00000007:
+  enabled: true
+  type: service
+  title: New Project Template
+  requirement: A starting template shall be easily available for new projects.
+  description: This will allow the user to start from a good place.
+  parent_idx:
+  - r00000006
+
+r00000010:
+  enabled: true
+  type: service
+  title: New Requirement - need idea.
+  requirement: ''
+
+r00000011:
+  enabled: true
+  type: service
+  title: 123456789 123456789 123456789 123456789 123456789 1234567891
+  requirement: This is to test if there is a good max length for the title.

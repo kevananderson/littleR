@@ -101,6 +101,7 @@ def test_folio_link_and_write(scratch_path, requirement_yaml):
 
     # delete the file
     os.unlink(software_file)
+    folio.clear()
     assert os.path.isfile(software_file) == False
 
     # link and write the file

@@ -256,6 +256,17 @@ class Folio:
         except Exception:
             self._validator.file_note(self.path(), "Error writing file.", problem=True)
 
+    def clear(self):
+        """Clear the contents of the Folio.
+
+        This is used in testing to reset the object.
+        The requirements are cleared and the raw contents are cleared.
+        The object is marked as valid for further use.
+        """
+        self._requirements = []
+        self._raw_contents = ""
+        self._valid = True
+
     def _read_file(self):
         try:
             with open(self._path, "r", encoding="utf-8") as file:
